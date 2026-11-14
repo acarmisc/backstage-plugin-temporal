@@ -1,0 +1,9 @@
+---
+type: feature
+description: Enhanced RBAC compatibility and configurability for community-plugins compliance
+packages:
+  - @acarmisc/backstage-plugin-temporal
+  - @acarmisc/backstage-plugin-temporal-common
+  - @acarmisc/backstage-plugin-temporal-backend
+  - backend
+---

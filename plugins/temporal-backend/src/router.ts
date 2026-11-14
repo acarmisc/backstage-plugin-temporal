@@ -20,7 +20,11 @@ export interface RouterOptions {
   httpAuth: HttpAuthService;
   permissions: PermissionsService;
   urlReader: UrlReaderService;
-}
+  temporalConfig: {
+    enabled?: boolean;
+    readPermission?: typeof temporalReadPermission;
+    runReadPermission?: typeof temporalRunReadPermission;
+  };
 
 const MAX_RUNS = 100;
 
@@ -31,9 +35,22 @@ function required(value: unknown, name: string): string {
   return value;
 }
 
-export function createRouter({ service, httpAuth, permissions, urlReader }: RouterOptions) {
+export function createRouter({
+  service,
+  httpAuth,
+  permissions,
+  urlReader,
+  temporalConfig = {},
+}: RouterOptions) {
   const router = Router();
+  const {
+    enabled = true,
+    readPermission = temporalReadPermission,
+    runReadPermission = temporalRunReadPermission,
+  } = temporalConfig;
+
   async function allowed(req: express.Request, permission: typeof temporalReadPermission) {
+    if (!enabled) return true;
     const credentials = await httpAuth.credentials(req);
     const [decision] = await permissions.authorize([{ permission }], { credentials });
     return decision.result === AuthorizeResult.ALLOW;
@@ -41,10 +58,10 @@ export function createRouter({ service, httpAuth, permissions, urlReader }: Rout
 
   // Every route needs an authenticated user holding temporal.read.
   async function guard(req: express.Request, res: express.Response) {
-    if (await allowed(req, temporalReadPermission)) {
+    if (await allowed(req, readPermission)) {
       return true;
     }
-    res.status(403).json({ error: `missing permission ${temporalReadPermission.name}` });
+    res.status(403).json({ error: `missing permission ${readPermission.name}` });
     return false;
   }
 
@@ -82,7 +99,7 @@ export function createRouter({ service, httpAuth, permissions, urlReader }: Rout
     const cluster = required(req.query.cluster, 'cluster');
     const namespace = required(req.query.namespace, 'namespace');
     const workflowId = (req.params as unknown as string[])[0];
-    const includeOutput = await allowed(req, temporalRunReadPermission);
+    const includeOutput = await allowed(req, runReadPermission);
     res.json(await service.getRun(cluster, namespace, workflowId, includeOutput));
   });
 

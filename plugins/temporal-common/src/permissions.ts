@@ -17,6 +17,17 @@ export const temporalRunReadPermission = createPermission({
   attributes: { action: 'read' },
 });
 
+/** Permission configuration interface for plugin customization */
+export interface TemporalPermissionConfig {
+  /** Disable all permission checks (bypasses RBAC) */
+  enabled?: boolean;
+  /** Custom read permission name */
+  readPermission?: string;
+  /** Custom run read permission name */
+  runReadPermission?: string;
+}
+
+/** List of default temporal permissions. */
 export const temporalPermissions = [
   temporalReadPermission,
   temporalRunReadPermission,
