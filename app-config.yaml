@@ -1,0 +1,34 @@
+app:
+  title: Temporal Plugin Dev App
+  baseUrl: http://localhost:3000
+  packages: all
+
+organization:
+  name: Dev
+
+backend:
+  baseUrl: http://localhost:7007
+  listen:
+    port: 7007
+  cors:
+    origin: http://localhost:3000
+    methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+    credentials: true
+  database:
+    client: better-sqlite3
+    connection: ':memory:'
+
+auth:
+  providers:
+    guest: {}
+
+permission:
+  enabled: true
+
+catalog:
+  rules:
+    - allow: [Component, System, API, Resource, Location]
+
+# Temporal plugin configuration (see README, filled in during M2)
+# temporal:
+#   clusters: []

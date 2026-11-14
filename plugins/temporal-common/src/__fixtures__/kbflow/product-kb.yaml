@@ -1,0 +1,11 @@
+# Sanitised copy of a real kbflow stream: existing CronJobs run as stages in sequence.
+name: product-kb
+stages:
+  - {name: jira-fetcher,      use: k8s_job, cronjob: example-jira-fetcher,      namespace: example-ns, warn_exit: [2], timeout_s: 3600}
+  - {name: phase1-classifier, use: k8s_job, cronjob: example-phase1-classifier, namespace: example-ns, warn_exit: [2], timeout_s: 7200}
+  - {name: confluence-driver, use: k8s_job, cronjob: example-confluence-driver, namespace: example-ns, warn_exit: [2], retry_exit: [3], timeout_s: 7200}
+  - {name: clone-kb, use: git, timeout_s: 300,
+     params: {op: clone, repo: "https://git.example.com/docs/product-kb.git", branch: main, dest: "{workdir}/kb"}}
+  - name: publish-kb
+    use: kb_sync
+    params: {source_dir: "{workdir}/kb/mds", prefix: example-product-kb, kb_id: KBEXAMPLE03, ds_id: DSEXAMPLE03, delete_removed: true}

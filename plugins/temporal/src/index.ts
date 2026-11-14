@@ -1,0 +1,13 @@
+/*
+ * Copyright 2026 The Backstage Temporal plugin authors
+ * SPDX-License-Identifier: MIT
+ */
+
+export { temporalPlugin } from './plugin';
+export { WorkflowDiagram } from './components/WorkflowDiagram';
+export type { DiagramRenderer, DiagramRendererProps } from './components/DiagramRenderer';
+export { DiagramExport } from './components/DiagramExport';
+export { DefinitionPage } from './components/DefinitionPage';
+export { RunDetail } from './components/RunDetail';
+export { StreamsPage } from './components/StreamsPage';
+export { StreamPage } from './components/StreamPage';

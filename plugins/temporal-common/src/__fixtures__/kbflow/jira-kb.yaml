@@ -1,0 +1,16 @@
+# Sanitised copy of a real kbflow stream (structure kept, names and ids replaced).
+name: jira-kb
+stages:
+  - {name: clone-kb, use: git, timeout_s: 300,
+     params: {op: clone, repo: "https://git.example.com/docs/jira-kb.git", branch: develop, dest: "{workdir}/kb"}}
+  - {name: preflight, use: cli, timeout_s: 120, run: [jira-kb, preflight, --config, config/pilot.yaml]}
+  - {name: capture, use: cli, timeout_s: 3600, run: [jira-kb, capture, --config, config/pilot.yaml, --output, "{workdir}/snapshot"]}
+  - {name: render, use: cli, run: [jira-kb, render, --snapshot, "{workdir}/snapshot", --output, "{workdir}/rendered"]}
+  - {name: validate, use: cli, retries: 1, run: [jira-kb, validate, --input, "{workdir}/rendered"]}
+  - {name: export, use: cli, retries: 1, run: [jira-kb, export, --input, "{workdir}/rendered", --repo, "{workdir}/kb"]}
+  - name: push-kb
+    use: git
+    params: {op: push, dest: "{workdir}/kb", branch: develop, paths: [wiki], message: "chore(kb): refresh"}
+  - name: publish-kb
+    use: kb_sync
+    params: {source_dir: "{workdir}/kb/wiki", prefix: example-jira-kb, kb_id: KBEXAMPLE01, ds_id: DSEXAMPLE01, delete_removed: true}

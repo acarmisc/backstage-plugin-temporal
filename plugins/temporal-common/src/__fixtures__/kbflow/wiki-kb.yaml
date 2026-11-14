@@ -1,0 +1,16 @@
+# Sanitised copy of a real kbflow stream: validate, then sync to a knowledge base.
+name: wiki-kb
+stages:
+  - {name: clone-kb, use: git, timeout_s: 300,
+     params: {op: clone, repo: "https://git.example.com/docs/wiki.git", branch: main, dest: "{workdir}/kb"}}
+  - {name: validate, use: cli, retries: 1, cwd: "{workdir}/kb", run: [python3, scripts/validate.py]}
+  - {name: graph-check, use: cli, retries: 1, cwd: "{workdir}/kb", run: [python3, scripts/graph.py, --check]}
+  - name: publish-kb
+    use: kb_sync
+    params:
+      source_dir: "{workdir}/kb"
+      prefix: example-wiki-kb
+      kb_id: KBEXAMPLE02
+      ds_id: DSEXAMPLE02
+      delete_removed: true
+      exclude: [".git/*", "_templates/*", "scripts/*"]

@@ -1,0 +1,9 @@
+# Sanitised demo: two parallel sources joining at qualify, then synthesize and publish.
+name: demo-multisorgente
+stages:
+  - {name: jira, role: source, use: cli, needs: [], run: [jira-kb, capture]}
+  - {name: confluence, role: source, use: k8s_job, needs: [], optional: true, cronjob: example-confluence-driver, namespace: example-ns}
+  - {name: qualifica, role: qualify, use: qualify, needs: [jira, confluence], params: {input: ["{stage:jira}", "{stage:confluence}"], llm: {model: deepseek-v4-flash, criteria: "solo conoscenza di dominio"}}}
+  - {name: sintesi, role: synthesize, use: synthesize, needs: [qualifica], params: {input: "{stage:qualifica}", mode: llm, llm: {model: claude-haiku-4-5, prompt: "{content}"}}}
+  - {name: push, role: publish, use: git, needs: [sintesi], params: {op: push}}
+  - {name: pubblica, role: publish, use: kb_sync, needs: [push], params: {source_dir: x, prefix: p, kb_id: K1, ds_id: D1}}

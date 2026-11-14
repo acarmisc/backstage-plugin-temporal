@@ -1,0 +1,12 @@
+/*
+ * Copyright 2026 The Backstage Temporal plugin authors
+ * SPDX-License-Identifier: MIT
+ */
+
+export { temporalPlugin } from './plugin';
+export { TemporalService, streamNameOf } from './service';
+export { deriveStages } from './history';
+export type { DeriveInput, HistoryEvent, PendingActivity } from './history';
+export { createRedactor, DEFAULT_REDACTION_PATTERNS } from './redact';
+export { readTemporalConfig } from './config';
+export type { ClusterConfig, TemporalConfig } from './config';

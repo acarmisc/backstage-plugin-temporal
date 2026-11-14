@@ -1,0 +1,92 @@
+name: Publish to npm
+
+# Release process:
+#   git tag temporal-common@X.Y.Z     # or temporal-backend@X.Y.Z / temporal@X.Y.Z
+#   git push origin temporal-common@X.Y.Z
+#
+# Publish temporal-common FIRST when its version changed: the backend and the
+# frontend depend on it. The tag prefix selects the workspace package, and its
+# version must match the version committed in that package's package.json.
+
+on:
+  push:
+    tags:
+      - "temporal@*"
+      - "temporal-backend@*"
+      - "temporal-common@*"
+
+permissions:
+  contents: write
+  id-token: write # required for npm provenance attestation
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Resolve package from tag
+        id: pkg
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          case "$TAG" in
+            temporal-common@*)
+              echo "dir=plugins/temporal-common" >> "$GITHUB_OUTPUT"
+              echo "version=${TAG#temporal-common@}" >> "$GITHUB_OUTPUT"
+              ;;
+            temporal-backend@*)
+              echo "dir=plugins/temporal-backend" >> "$GITHUB_OUTPUT"
+              echo "version=${TAG#temporal-backend@}" >> "$GITHUB_OUTPUT"
+              ;;
+            temporal@*)
+              echo "dir=plugins/temporal" >> "$GITHUB_OUTPUT"
+              echo "version=${TAG#temporal@}" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "::error::Unrecognized tag pattern: $TAG"
+              exit 1
+              ;;
+          esac
+
+      - name: Verify tag version matches package.json
+        run: |
+          PKG_VERSION=$(node -p "require('./${{ steps.pkg.outputs.dir }}/package.json').version")
+          TAG_VERSION="${{ steps.pkg.outputs.version }}"
+          if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
+            echo "::error::Tag version ($TAG_VERSION) does not match ${{ steps.pkg.outputs.dir }}/package.json version ($PKG_VERSION)"
+            exit 1
+          fi
+
+      # Lockfile-exact install. Dependencies between workspace packages are
+      # written as workspace:^ and rewritten to real versions by `yarn npm publish`.
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build
+        # Common first: the backend and frontend compile against its output.
+        run: |
+          yarn workspace @acarmisc/backstage-plugin-temporal-common build
+          yarn workspace "$(node -p "require('./${{ steps.pkg.outputs.dir }}/package.json').name")" build
+
+      - name: Publish to npm
+        working-directory: ${{ steps.pkg.outputs.dir }}
+        run: yarn npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          generate_release_notes: true

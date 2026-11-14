@@ -1,0 +1,11 @@
+# Sanitised copy of a real kbflow stream: a weekly check that opens a merge request, never pushes to main.
+name: wiki-evidence
+stages:
+  - {name: clone-kb, use: git, timeout_s: 300,
+     params: {op: clone, repo: "https://git.example.com/docs/wiki.git", branch: main, dest: "{workdir}/kb"}}
+  - {name: evidence, use: cli, cwd: "{workdir}/kb", retries: 1, retry_exit: [2], run: [python3, scripts/evidence.py]}
+  - {name: graph, use: cli, cwd: "{workdir}/kb", retries: 1, run: [python3, scripts/graph.py]}
+  - name: open-mr
+    use: git
+    params: {op: push, dest: "{workdir}/kb", branch: main, mr: true, paths: [documentazione],
+             message: "chore(audit): update evidence", author: kb-bot}
