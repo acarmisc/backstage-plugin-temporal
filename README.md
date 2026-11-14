@@ -4,8 +4,30 @@ Backstage plugins for [Temporal](https://temporal.io): high-level monitoring of
 workflow "streams", and a visual diagram of YAML-defined workflows with the live
 state of a run overlaid.
 
-Status: early development. Not published. Read-only: the plugin never starts,
+Published on npm. Read-only: the plugin never starts,
 signals or changes workflows.
+
+## Installation
+
+Install `@acarmisc/backstage-plugin-temporal` in the app and
+`@acarmisc/backstage-plugin-temporal-backend` in the backend. Install their
+Backstage peer dependencies at compatible versions in the respective workspaces.
+The new frontend system and Backstage 1.56.2 have been tested.
+
+Add `temporalPlugin` from the frontend package to `createApp({ features: [...] })`,
+and register the backend with:
+
+```ts
+backend.add(import('@acarmisc/backstage-plugin-temporal-backend'));
+```
+
+The main page is discoverable by new-frontend navigation (`nav.rest()`); custom
+sidebars can select `page:temporal`. API access is still controlled by permissions.
+
+The backend installs `@temporalio/client` as a dependency (`^1.13.0`); its exact
+version is selected by the host lockfile. Connectivity has been verified against
+Temporal OSS server 1.32.2, Helm chart 1.8.0 and PostgreSQL (`postgres12` schema);
+other server/client combinations have not been validated here.
 
 ## What you get
 
@@ -57,6 +79,8 @@ temporal:
       namespaces: [kb]             # allow-list: other namespaces are never shown
       tls:
         enabled: false
+        # serverName: temporal.example.com  # optional TLS SNI override
+        # caData: ${TEMPORAL_CA_PEM}        # optional PEM-encoded root CA
       apiKey: ${TEMPORAL_API_KEY}  # Temporal Cloud; requires tls.enabled
       uiBaseUrl: https://temporal.example.com
       streamPrefix: 'stream/'      # workflow id prefix that identifies a stream
@@ -67,11 +91,27 @@ temporal:
     maxTailLength: 2000
 ```
 
+When using custom TLS options, set `tls.enabled: true`. With default-deny
+NetworkPolicies, allow backend egress to the Temporal gRPC port (usually 7233).
+The browser uses `uiBaseUrl` only for links to the Temporal UI; Temporal gRPC
+connections and credentials stay in the backend, so no Temporal CSP entry is needed.
+
 Permissions (permission framework):
 
 - `temporal.read`: list streams and runs, read definitions and health.
 - `temporal.run.read`: see task output and run parameters. Without it the run
   detail shows stages and states but no output.
+
+The backend registers `temporalPermissions` with Backstage. With RBAC enabled,
+explicitly grant `temporal.read`; otherwise users see 403s.
+For example, in the Backstage RBAC plugin's `policies.csv`:
+
+```csv
+p, role:default/temporal-reader, temporal.read, read, allow
+```
+
+Grant `temporal.run.read` separately if that role may see output and parameters.
+The navigation entry is not automatically hidden when permission is denied.
 
 Entity annotations:
 
@@ -81,6 +121,29 @@ Entity annotations:
 | `temporal.io/namespace` | namespace (default: the cluster's first namespace) |
 | `temporal.io/stream` | stream name, the id prefix after `streamPrefix` |
 | `temporal.io/definition-location` | URL of the YAML definition (optional) |
+
+For example:
+
+```yaml
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: crm-kb
+  annotations:
+    temporal.io/cluster: staging
+    temporal.io/namespace: kb
+    temporal.io/stream: crm-jira
+    temporal.io/definition-location: https://example.com/workflows/crm-jira.yaml
+spec:
+  type: service
+  lifecycle: production
+  owner: team-a
+```
+
+The stream name is the part after `streamPrefix`: with `stream/`, manual workflow
+IDs can be `stream/crm-jira/20261114T102908` and scheduled action IDs can be
+`stream/crm-jira-2026-11-15T03:00:00Z`. The tab and card require the stream
+annotation; use the URL reader allow-list for the definition URL.
 
 Definitions from a repository are read through Backstage's `UrlReader`, so only
 hosts configured under `integrations` (or `backend.reading.allow`) can be read.
@@ -155,12 +218,12 @@ MIT. See [LICENSE](./LICENSE).
 Publishing is done by GitHub Actions when a tag is pushed (`.github/workflows/publish.yaml`):
 
 ```sh
-git tag temporal-common@0.1.0   # publish first when temporal-common changed
-git push origin temporal-common@0.1.0
-git tag temporal-backend@0.1.0
-git push origin temporal-backend@0.1.0
-git tag temporal@0.1.0
-git push origin temporal@0.1.0
+git tag temporal-common@0.2.0   # publish first when temporal-common changed
+git push origin temporal-common@0.2.0
+git tag temporal-backend@0.2.0
+git push origin temporal-backend@0.2.0
+git tag temporal@0.2.0
+git push origin temporal@0.2.0
 ```
 
 The tag's version must match the `version` of the package it names. The job

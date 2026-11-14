@@ -4,10 +4,12 @@
  */
 
 import { ConfigReader } from '@backstage/config';
+import { Connection } from '@temporalio/client';
+import defaultPlugin, { temporalPlugin } from './index';
 import { TtlCache } from './cache';
 import { readTemporalConfig } from './config';
 import { createRedactor } from './redact';
-import { streamNameOf } from './service';
+import { streamNameOf, TemporalService } from './service';
 
 describe('createRedactor', () => {
   const redactor = createRedactor();
@@ -120,4 +122,36 @@ describe('readTemporalConfig', () => {
     const config = new ConfigReader({ temporal: { clusters: [cluster, cluster] } });
     expect(() => readTemporalConfig(config)).toThrow(/unique names/);
   });
+
+  it('passes TLS server name and PEM CA to the Temporal connection', async () => {
+    const cluster = {
+      ...base.temporal.clusters[0],
+      tls: { enabled: true, serverName: 'temporal.example.com', caData: 'test PEM' },
+    };
+    const config = readTemporalConfig(new ConfigReader({ temporal: { clusters: [cluster] } }));
+    const connect = jest.spyOn(Connection, 'connect').mockResolvedValue({
+      workflowService: { getSystemInfo: async () => ({}) },
+    } as never);
+    try {
+      await new TemporalService({ config }).health();
+      expect(connect).toHaveBeenCalledWith(expect.objectContaining({
+        tls: {
+          serverNameOverride: 'temporal.example.com',
+          serverRootCACertificate: Buffer.from('test PEM'),
+        },
+      }));
+    } finally {
+      connect.mockRestore();
+    }
+  });
+
+  it('rejects TLS options when TLS is disabled', () => {
+    const cluster = { ...base.temporal.clusters[0], tls: { enabled: false, caData: 'PEM' } };
+    expect(() => readTemporalConfig(new ConfigReader({ temporal: { clusters: [cluster] } })))
+      .toThrow(/tls.enabled is required/);
+  });
+});
+
+it('exports the backend plugin as both default and named', () => {
+  expect(defaultPlugin).toBe(temporalPlugin);
 });

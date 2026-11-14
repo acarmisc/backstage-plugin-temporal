@@ -332,7 +332,14 @@ function sanitiseGraph(
 async function defaultConnect(cluster: ClusterConfig): Promise<Connection> {
   return Connection.connect({
     address: cluster.address,
-    tls: cluster.tls ? {} : undefined,
+    tls: cluster.tls
+      ? {
+          serverNameOverride: cluster.tlsServerName,
+          serverRootCACertificate: cluster.tlsCaData
+            ? Buffer.from(cluster.tlsCaData, 'utf8')
+            : undefined,
+        }
+      : undefined,
     apiKey: cluster.apiKey,
   });
 }

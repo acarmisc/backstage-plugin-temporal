@@ -4,7 +4,6 @@
  */
 
 import { createBackend } from '@backstage/backend-defaults';
-import { temporalPlugin } from '@acarmisc/backstage-plugin-temporal-backend';
 
 const backend = createBackend();
 
@@ -24,6 +23,6 @@ backend.add(
 );
 
 // the plugin under development
-backend.add(temporalPlugin);
+backend.add(import('@acarmisc/backstage-plugin-temporal-backend'));
 
 backend.start();

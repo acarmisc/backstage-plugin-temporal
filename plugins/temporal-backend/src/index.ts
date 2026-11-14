@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-export { temporalPlugin } from './plugin';
+export { temporalPlugin, temporalPlugin as default } from './plugin';
 export { TemporalService, streamNameOf } from './service';
 export { deriveStages } from './history';
 export type { DeriveInput, HistoryEvent, PendingActivity } from './history';

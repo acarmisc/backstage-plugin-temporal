@@ -11,6 +11,8 @@ export interface ClusterConfig {
   address: string;
   namespaces: string[];
   tls: boolean;
+  tlsServerName?: string;
+  tlsCaData?: string;
   apiKey?: string;
   uiBaseUrl?: string;
   streamPrefix: string;
@@ -32,11 +34,19 @@ export function readTemporalConfig(config: Config): TemporalConfig {
       if (namespaces.length === 0) {
         throw new Error(`temporal cluster "${name}": namespaces must not be empty`);
       }
+      const tls = cluster.getOptionalBoolean('tls.enabled') ?? false;
+      const tlsServerName = cluster.getOptionalString('tls.serverName');
+      const tlsCaData = cluster.getOptionalString('tls.caData');
+      if (!tls && (tlsServerName || tlsCaData)) {
+        throw new Error(`temporal cluster "${name}": tls.enabled is required for TLS options`);
+      }
       return {
         name,
         address: cluster.getString('address'),
         namespaces,
-        tls: cluster.getOptionalBoolean('tls.enabled') ?? false,
+        tls,
+        tlsServerName,
+        tlsCaData,
         apiKey: cluster.getOptionalString('apiKey'),
         uiBaseUrl: cluster.getOptionalString('uiBaseUrl'),
         streamPrefix: cluster.getOptionalString('streamPrefix') ?? 'stream/',

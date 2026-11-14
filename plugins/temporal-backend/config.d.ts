@@ -13,7 +13,13 @@ export interface Config {
       address: string;
       /** Allow-list: the plugin never shows other namespaces. */
       namespaces: string[];
-      tls?: { enabled: boolean };
+      tls?: {
+        enabled: boolean;
+        /** Override the TLS server name (SNI). */
+        serverName?: string;
+        /** PEM-encoded root CA certificate. */
+        caData?: string;
+      };
       /** API key for Temporal Cloud. Requires TLS. @visibility secret */
       apiKey?: string;
       /** Base URL of the Temporal web UI, for "open in Temporal" links. */

@@ -3,15 +3,23 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { createFrontendPlugin, PageBlueprint } from '@backstage/frontend-plugin-api';
+import { createFrontendPlugin, createRouteRef, PageBlueprint } from '@backstage/frontend-plugin-api';
 import { EntityCardBlueprint, EntityContentBlueprint } from '@backstage/plugin-catalog-react/alpha';
 import { TEMPORAL_PLUGIN_ID } from '@acarmisc/backstage-plugin-temporal-common';
 import { hasTemporalStream } from './components/entity';
 
+const rootRouteRef = createRouteRef();
+
 const streamsPage = PageBlueprint.make({
-  name: 'streams',
   params: {
     path: '/temporal',
+    routeRef: rootRouteRef,
+    title: 'Temporal',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Zm1-13h-2v6l5 3 1-1.7-4-2.3Z" />
+      </svg>
+    ),
     loader: () => import('./components/StreamsPage').then(m => <m.StreamsPage />),
   },
 });
@@ -52,5 +60,6 @@ const entityCard = EntityCardBlueprint.make({
 
 export const temporalPlugin = createFrontendPlugin({
   pluginId: TEMPORAL_PLUGIN_ID,
+  routes: { root: rootRouteRef },
   extensions: [streamsPage, streamPage, definitionPage, entityTab, entityCard],
 });
