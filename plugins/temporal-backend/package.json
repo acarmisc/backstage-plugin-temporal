@@ -1,6 +1,6 @@
 {
   "name": "@acarmisc/backstage-plugin-temporal-backend",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Backstage backend plugin exposing read-only Temporal stream and run data",
   "license": "Apache-2.0",
   "main": "src/index.ts",
