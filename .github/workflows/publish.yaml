@@ -72,6 +72,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
+      - name: Type check
+        run: yarn tsc
+
       - name: Build
         # Common first: the backend and frontend compile against its output.
         run: |
