@@ -1,6 +1,6 @@
 {
   "name": "@acarmisc/backstage-plugin-temporal",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Backstage frontend plugin: Temporal stream pages, entity tab and workflow diagram",
   "license": "Apache-2.0",
   "main": "src/index.ts",
