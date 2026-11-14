@@ -19,6 +19,20 @@ signals or changes workflows.
   workflow definition stored in a repository.
 - **Diagram export**: SVG, PNG and Mermaid source.
 
+## Screenshots
+
+| Streams page | Run detail (live state) |
+|---|---|
+| ![Streams page](docs/images/streams.png) | ![Run detail](docs/images/stream-running.png) |
+
+| Completed run | Entity tab |
+|---|---|
+| ![Completed run](docs/images/stream-completed.png) | ![Entity tab](docs/images/entity-tab.png) |
+
+| Definition (single source) | Definition (parallel sources) |
+|---|---|
+| ![Definition](docs/images/definition.png) | ![Definition DAG](docs/images/definition-dag.png) |
+
 ## Layout
 
 ```
