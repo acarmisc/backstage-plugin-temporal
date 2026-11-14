@@ -27,8 +27,7 @@ import {
 } from './history';
 import { createRedactor, Redactor } from './redact';
 
-const MAX_STREAM_SCAN = 500;
-// Schedule actions append the UTC action time (RFC 3339) to the action id: stream/<name>-2026-11-15T03:00:00Z.
+const MAX_STREAM_SCAN = 500; // default scan bound; configured per cluster in TemporalConfig
 const SCHEDULE_SUFFIX = /-\d{4}-\d{2}-\d{2}T[\d:.]+Z$/;
 
 export interface TemporalServiceOptions {

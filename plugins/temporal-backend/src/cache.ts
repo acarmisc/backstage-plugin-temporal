@@ -22,11 +22,9 @@ export class TtlCache {
       return existing.value as Promise<T>;
     }
     const value = load();
-    this.entries.set(key, { expiresAt: this.now() + this.ttlMs, value });
-    value.catch(() => {
-      if (this.entries.get(key)?.value === value) {
-        this.entries.delete(key);
-      }
+    // Only cache successful results; failed loads are retried next call
+    value.then((result) => {
+      this.entries.set(key, { expiresAt: this.now() + this.ttlMs, value: Promise.resolve(result) });
     });
     return value;
   }

@@ -1,8 +1,9 @@
 ---
 type: patch
-description: Version bump after license migration to Apache-2.0
+description: Version bump to 0.5.0 with dependency cleanup, license fix, and cache/RBAC fixes
 packages:
   - @acarmisc/backstage-plugin-temporal
   - @acarmisc/backstage-plugin-temporal-common
   - @acarmisc/backstage-plugin-temporal-backend
   - backend
+---

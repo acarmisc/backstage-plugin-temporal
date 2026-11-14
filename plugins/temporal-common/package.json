@@ -1,6 +1,6 @@
 {
   "name": "@acarmisc/backstage-plugin-temporal-common",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Shared types, workflow graph model and YAML parsers for the Temporal Backstage plugin",
   "license": "Apache-2.0",
   "main": "src/index.ts",

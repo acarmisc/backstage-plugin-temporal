@@ -1,6 +1,6 @@
 {
   "name": "@acarmisc/backstage-plugin-temporal",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Backstage frontend plugin: Temporal stream pages, entity tab and workflow diagram",
   "license": "Apache-2.0",
   "main": "src/index.ts",
@@ -35,7 +35,7 @@
     "@backstage/catalog-model": "^1.7.5",
     "@backstage/cli": "^0.36.7",
     "@backstage/core-components": "^0.18.15",
-    "@backstage/core-plugin-api": "^1.12.11",
+    "@backstage/core-plugin-api": "^0.18.2",
     "@backstage/frontend-plugin-api": "^0.18.2",
     "@backstage/plugin-catalog-react": "^3.3.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -47,7 +47,7 @@
   "peerDependencies": {
     "@backstage/catalog-model": "^1.7.5",
     "@backstage/core-components": "^0.18.15",
-    "@backstage/core-plugin-api": "^1.12.11",
+    "@backstage/core-plugin-api": "^0.18.2",
     "@backstage/frontend-plugin-api": "^0.18.2",
     "@backstage/plugin-catalog-react": "^3.3.0",
     "react": "^18.0.2",

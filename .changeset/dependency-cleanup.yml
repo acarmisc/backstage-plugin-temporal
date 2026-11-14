@@ -1,0 +1,6 @@
+---
+type: fix
+description: Remove unused better-sqlite3 and node-gyp dependencies from backend package
+packages:
+  - @acarmisc/backstage-plugin-temporal-backend
+---

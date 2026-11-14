@@ -1,0 +1,6 @@
+---
+type: fix
+description: Fix TTL cache race condition - only cache successful loads
+packages:
+  - @acarmisc/backstage-plugin-temporal-backend
+---
