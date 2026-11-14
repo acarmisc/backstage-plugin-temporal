@@ -1,0 +1,4 @@
+# CODEOWNERS for backstage-plugin-temporal
+# See: https://github.com/backstage/community-plugins/blob/main/CONTRIBUTING.md#organization-membership-request-for-codeowners
+
+* @acarmisc
