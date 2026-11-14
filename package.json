@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Backstage plugins for Temporal: stream monitoring and workflow diagrams",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "engines": {
     "node": "22 || 24"
   },

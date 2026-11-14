@@ -1,6 +1,6 @@
 /*
  * Copyright 2026 The Backstage Temporal plugin authors
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 // Defaults for secrets that commonly show up in task output and error messages.

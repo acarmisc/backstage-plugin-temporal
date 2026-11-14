@@ -1,0 +1,8 @@
+---
+type: fix
+description: Change license from MIT to Apache-2.0 to comply with community-plugins contribution guidelines
+packages:
+  - @acarmisc/backstage-plugin-temporal
+  - @acarmisc/backstage-plugin-temporal-common
+  - @acarmisc/backstage-plugin-temporal-backend
+  - backend
