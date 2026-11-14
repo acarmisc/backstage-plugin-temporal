@@ -48,5 +48,14 @@
   "peerDependencies": {
     "react": "^18.0.2",
     "react-dom": "^18.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/acarmisc/backstage-plugin-temporal.git",
+    "directory": "plugins/temporal"
+  },
+  "homepage": "https://github.com/acarmisc/backstage-plugin-temporal",
+  "bugs": {
+    "url": "https://github.com/acarmisc/backstage-plugin-temporal/issues"
   }
 }

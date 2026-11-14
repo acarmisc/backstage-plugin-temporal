@@ -40,5 +40,14 @@
     "@backstage/cli": "^0.36.7",
     "@types/express": "^4.17.25"
   },
-  "configSchema": "config.d.ts"
+  "configSchema": "config.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/acarmisc/backstage-plugin-temporal.git",
+    "directory": "plugins/temporal-backend"
+  },
+  "homepage": "https://github.com/acarmisc/backstage-plugin-temporal",
+  "bugs": {
+    "url": "https://github.com/acarmisc/backstage-plugin-temporal/issues"
+  }
 }
