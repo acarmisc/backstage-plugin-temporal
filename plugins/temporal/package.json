@@ -35,7 +35,7 @@
     "@backstage/catalog-model": "^1.7.5",
     "@backstage/cli": "^0.36.7",
     "@backstage/core-components": "^0.18.15",
-    "@backstage/core-plugin-api": "^0.18.2",
+    "@backstage/core-plugin-api": "^1.12.11",
     "@backstage/frontend-plugin-api": "^0.18.2",
     "@backstage/plugin-catalog-react": "^3.3.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -47,7 +47,7 @@
   "peerDependencies": {
     "@backstage/catalog-model": "^1.7.5",
     "@backstage/core-components": "^0.18.15",
-    "@backstage/core-plugin-api": "^0.18.2",
+    "@backstage/core-plugin-api": "^1.12.11",
     "@backstage/frontend-plugin-api": "^0.18.2",
     "@backstage/plugin-catalog-react": "^3.3.0",
     "react": "^18.0.2",

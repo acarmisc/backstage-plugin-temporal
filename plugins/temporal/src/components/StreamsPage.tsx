@@ -34,8 +34,13 @@ export function StreamsPage() {
   const cluster = params.get('cluster') ?? clusters.data?.[0]?.name;
   const namespace = params.get('namespace') ?? clusters.data?.find(c => c.name === cluster)?.namespaces[0];
 
+  // Both come from `/clusters`: requesting streams before it answers is a 400
+  // (`query parameter "cluster" is required`) and leaves a stale error on screen.
   const streams = useLoad(
-    () => api.get<StreamSummary[]>('/streams', { cluster, namespace }),
+    () =>
+      cluster && namespace
+        ? api.get<StreamSummary[]>('/streams', { cluster, namespace })
+        : undefined,
     [api, cluster, namespace],
   );
 

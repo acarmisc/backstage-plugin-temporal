@@ -22,9 +22,13 @@ export class TtlCache {
       return existing.value as Promise<T>;
     }
     const value = load();
-    // Only cache successful results; failed loads are retried next call
-    value.then((result) => {
-      this.entries.set(key, { expiresAt: this.now() + this.ttlMs, value: Promise.resolve(result) });
+    // Cache the promise right away so concurrent callers share one load, and
+    // evict it on failure so a failed load is retried on the next call.
+    this.entries.set(key, { expiresAt: this.now() + this.ttlMs, value });
+    value.catch(() => {
+      if (this.entries.get(key)?.value === value) {
+        this.entries.delete(key);
+      }
     });
     return value;
   }

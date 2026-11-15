@@ -23,7 +23,14 @@ export function StreamPage() {
   const selected = params.get('run') ?? undefined;
 
   const runs = useLoad(
-    () => api.get<RunSummary[]>(`/streams/${encodeURIComponent(name)}/runs`, { cluster, namespace, limit: 20 }),
+    () =>
+      cluster && namespace && name
+        ? api.get<RunSummary[]>(`/streams/${encodeURIComponent(name)}/runs`, {
+            cluster,
+            namespace,
+            limit: 20,
+          })
+        : undefined,
     [api, cluster, namespace, name],
   );
   const current = selected ?? runs.data?.[0]?.workflowId;

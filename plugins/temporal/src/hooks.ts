@@ -14,9 +14,14 @@ export interface Loaded<T> {
 
 /**
  * Runs `load` when `deps` change and whenever `reload` is called. Stale results
- * from a previous request are ignored.
+ * from a previous request are ignored. Returning `undefined` means "the deps
+ * are not ready yet": nothing is requested and the hook stays loading.
  */
-export function useLoad<T>(load: () => Promise<T>, deps: unknown[], intervalMs?: number): Loaded<T> {
+export function useLoad<T>(
+  load: () => Promise<T> | undefined,
+  deps: unknown[],
+  intervalMs?: number,
+): Loaded<T> {
   const [data, setData] = useState<T>();
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState(true);
@@ -25,7 +30,11 @@ export function useLoad<T>(load: () => Promise<T>, deps: unknown[], intervalMs?:
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    load()
+    const request = load();
+    if (!request) {
+      return undefined;
+    }
+    request
       .then(result => {
         if (!cancelled) {
           setData(result);

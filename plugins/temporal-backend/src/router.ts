@@ -20,11 +20,13 @@ export interface RouterOptions {
   httpAuth: HttpAuthService;
   permissions: PermissionsService;
   urlReader: UrlReaderService;
-  temporalConfig: {
+  // Optional: `createRouter` callers may leave the RBAC knobs at their defaults.
+  temporalConfig?: {
     enabled?: boolean;
     readPermission?: typeof temporalReadPermission;
     runReadPermission?: typeof temporalRunReadPermission;
   };
+}
 
 const MAX_RUNS = 100;
 
