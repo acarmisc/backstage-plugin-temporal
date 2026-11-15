@@ -36,6 +36,20 @@ describe('createRedactor', () => {
       redactor.params({ repo: 'https://example.com/a.git', api_token: 'abc', dest: '/tmp' }),
     ).toEqual({ repo: 'https://example.com/a.git', api_token: '[REDACTED]', dest: '/tmp' });
   });
+
+  it('deep-copies values, masking sensitive keys and secret patterns without truncating', () => {
+    const short = createRedactor({ maxLength: 5 });
+    const copy = short.deep({
+      note: `${'x'.repeat(20)} password=hunter2`,
+      api_token: 'abc',
+      nested: [{ auth: { user: 'a' } }, 42, null],
+    });
+    expect(copy).toEqual({
+      note: `${'x'.repeat(20)} [REDACTED]`,
+      api_token: '[REDACTED]',
+      nested: [{ auth: '[REDACTED]' }, 42, null],
+    });
+  });
 });
 
 describe('TtlCache', () => {

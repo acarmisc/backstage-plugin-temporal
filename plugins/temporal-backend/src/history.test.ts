@@ -3,7 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { deriveStages, HistoryEvent, Payloads } from './history';
+import {
+  deriveStages,
+  HistoryEvent,
+  Payloads,
+  toHistoryEvent,
+  workflowStatusOf,
+} from './history';
 
 const json = (value: unknown): Payloads => ({
   payloads: [{ data: Buffer.from(JSON.stringify(value)) }],
@@ -132,5 +138,46 @@ describe('deriveStages', () => {
       ],
     });
     expect(stateOf(result, 'a')?.state).toBe('ok');
+  });
+});
+
+describe('toHistoryEvent', () => {
+  // Long-like values: protobufjs int64 fields decode to Long objects.
+  const long = (value: number) => ({ toNumber: () => value, toString: () => String(value) });
+
+  const startedEvent = {
+    eventId: long(7),
+    eventTime: { seconds: long(1700000000), nanos: 500000000 },
+    workflowExecutionStartedEventAttributes: {
+      input: json({ name: 'build' }),
+      startTime: { seconds: long(1700000001), nanos: 0 },
+      workflowExecutionTimeout: { seconds: long(3600), nanos: 0 },
+      attempt: long(2),
+      data: Buffer.from('raw bytes'),
+    },
+  };
+
+  it('names the event after its attribute key and converts the event time', () => {
+    const event = toHistoryEvent(startedEvent, false);
+    expect(event.eventId).toBe(7);
+    expect(event.eventType).toBe('WorkflowExecutionStarted');
+    expect(event.eventTime).toBe(new Date(1700000000500).toISOString());
+  });
+
+  it('withholds payloads and drops bytes without temporal.run.read', () => {
+    expect(toHistoryEvent(startedEvent, false).attributes).toEqual({
+      input: '[withheld: needs temporal.run.read]',
+      startTime: new Date(1700000001000).toISOString(),
+      workflowExecutionTimeout: { seconds: 3600, nanos: 0 },
+      attempt: 2,
+    });
+  });
+
+  it('decodes payloads when temporal.run.read is granted', () => {
+    expect(toHistoryEvent(startedEvent, true).attributes.input).toEqual([{ name: 'build' }]);
+  });
+
+  it('maps the cancelled spelling of the SDK status to CANCELED', () => {
+    expect(workflowStatusOf('CANCELLED')).toBe('CANCELED');
   });
 });

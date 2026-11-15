@@ -22,6 +22,8 @@ export interface Redactor {
   text(value: string | undefined): string | undefined;
   /** Masks the values of parameters whose key looks sensitive. */
   params(value: Record<string, unknown> | undefined): Record<string, unknown> | undefined;
+  /** Copies a value, masking sensitive keys and secret patterns in strings. No truncation. */
+  deep(value: unknown): unknown;
 }
 
 export function createRedactor(options: {
@@ -32,20 +34,37 @@ export function createRedactor(options: {
     pattern => new RegExp(pattern, 'gi'),
   );
   const maxLength = options.maxLength ?? 2000;
+  const mask = (value: string) =>
+    regexes.reduce((result, regex) => result.replace(regex, MASK), value);
+  const deep = (value: unknown): unknown => {
+    if (typeof value === 'string') {
+      return mask(value);
+    }
+    if (Array.isArray(value)) {
+      return value.map(deep);
+    }
+    if (value === null || typeof value !== 'object') {
+      return value;
+    }
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [
+        key,
+        SENSITIVE_KEY.test(key) ? MASK : deep(item),
+      ]),
+    );
+  };
 
   return {
     text(value) {
       if (value === undefined) {
         return undefined;
       }
-      let result = value;
-      for (const regex of regexes) {
-        result = result.replace(regex, MASK);
-      }
+      const result = mask(value);
       return result.length > maxLength
         ? `${result.slice(0, maxLength)}… [truncated]`
         : result;
     },
+    deep,
     params(value) {
       if (value === undefined) {
         return undefined;

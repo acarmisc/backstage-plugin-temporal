@@ -11,3 +11,6 @@ export { DefinitionPage } from './components/DefinitionPage';
 export { RunDetail } from './components/RunDetail';
 export { StreamsPage } from './components/StreamsPage';
 export { StreamPage } from './components/StreamPage';
+export { WorkflowsPage } from './components/WorkflowsPage';
+export { WorkflowPage } from './components/WorkflowPage';
+export { JsonViewer } from './components/JsonViewer';

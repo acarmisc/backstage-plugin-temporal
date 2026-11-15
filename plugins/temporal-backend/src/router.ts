@@ -13,7 +13,7 @@ import {
   temporalReadPermission,
   temporalRunReadPermission,
 } from '@acarmisc/backstage-plugin-temporal-common';
-import { TemporalService } from './service';
+import { isListStatus, ListStatus, TemporalService } from './service';
 
 export interface RouterOptions {
   service: TemporalService;
@@ -29,12 +29,52 @@ export interface RouterOptions {
 }
 
 const MAX_RUNS = 100;
+const DEFAULT_PAGE_SIZE = 25;
+const MAX_PAGE_SIZE = 100;
 
 function required(value: unknown, name: string): string {
   if (typeof value !== 'string' || value === '') {
     throw new InputError(`query parameter "${name}" is required`);
   }
   return value;
+}
+
+function optional(value: unknown, name: string): string | undefined {
+  if (value === undefined || value === '') {
+    return undefined;
+  }
+  if (typeof value !== 'string') {
+    throw new InputError(`query parameter "${name}" must be given once`);
+  }
+  return value;
+}
+
+function statusesOf(value: unknown): ListStatus[] {
+  const names = (optional(value, 'status') ?? '').split(',').map(name => name.trim()).filter(Boolean);
+  const unknown = names.find(name => !isListStatus(name));
+  if (unknown !== undefined) {
+    throw new InputError(`unknown status "${unknown}"`);
+  }
+  return names as ListStatus[];
+}
+
+function startTimeOf(value: unknown): string | undefined {
+  const startTime = optional(value, 'startTime');
+  if (startTime !== undefined && Number.isNaN(Date.parse(startTime))) {
+    throw new InputError('startTime must be an ISO date');
+  }
+  return startTime;
+}
+
+function pageSizeOf(value: unknown): number {
+  const size = optional(value, 'pageSize');
+  if (size === undefined) {
+    return DEFAULT_PAGE_SIZE;
+  }
+  if (!Number.isFinite(Number(size))) {
+    throw new InputError('pageSize must be a number');
+  }
+  return Math.min(Math.max(Math.floor(Number(size)), 1), MAX_PAGE_SIZE);
 }
 
 export function createRouter({
@@ -103,6 +143,60 @@ export function createRouter({
     const workflowId = (req.params as unknown as string[])[0];
     const includeOutput = await allowed(req, runReadPermission);
     res.json(await service.getRun(cluster, namespace, workflowId, includeOutput));
+  });
+
+  // Workflow browser: any workflow in an allowed namespace, not only stream workflows.
+  router.get('/workflows', async (req, res) => {
+    if (!(await guard(req, res))) return;
+    const cluster = required(req.query.cluster, 'cluster');
+    const namespace = required(req.query.namespace, 'namespace');
+    res.json(
+      await service.listWorkflows(cluster, namespace, {
+        statuses: statusesOf(req.query.status),
+        workflowType: optional(req.query.workflowType, 'workflowType'),
+        startTime: startTimeOf(req.query.startTime),
+        pageSize: pageSizeOf(req.query.pageSize),
+        nextPageToken: optional(req.query.nextPageToken, 'nextPageToken'),
+      }),
+    );
+  });
+
+  // Workflow ids may contain slashes, so the browser sends them encoded (%2F).
+  router.get('/workflows/:namespace/:workflowId/:runId', async (req, res) => {
+    if (!(await guard(req, res))) return;
+    const cluster = required(req.query.cluster, 'cluster');
+    const includePayloads = await allowed(req, runReadPermission);
+    res.json(
+      await service.getWorkflow(
+        cluster,
+        req.params.namespace,
+        req.params.workflowId,
+        req.params.runId,
+        includePayloads,
+      ),
+    );
+  });
+
+  router.get('/workflows/:namespace/:workflowId/:runId/history', async (req, res) => {
+    if (!(await guard(req, res))) return;
+    const cluster = required(req.query.cluster, 'cluster');
+    const includePayloads = await allowed(req, runReadPermission);
+    res.json(
+      await service.getHistory(
+        cluster,
+        req.params.namespace,
+        req.params.workflowId,
+        req.params.runId,
+        includePayloads,
+      ),
+    );
+  });
+
+  router.get('/schedules/:scheduleId', async (req, res) => {
+    if (!(await guard(req, res))) return;
+    const cluster = required(req.query.cluster, 'cluster');
+    const namespace = required(req.query.namespace, 'namespace');
+    res.json(await service.getSchedule(cluster, namespace, req.params.scheduleId));
   });
 
   // Definition from a YAML file in a repository. UrlReader only reads hosts

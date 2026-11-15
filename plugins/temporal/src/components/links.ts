@@ -10,9 +10,23 @@ export function useUrlParams(): URLSearchParams {
   return useMemo(() => new URLSearchParams(window.location.search), []);
 }
 
-export function streamLink(params: { cluster: string; namespace: string; name: string; run?: string }) {
+/** `path?query`, leaving out undefined values. */
+export function withQuery(path: string, params: Record<string, string | undefined>): string {
   const search = new URLSearchParams(
     Object.entries(params).filter((entry): entry is [string, string] => entry[1] !== undefined),
   );
-  return `/temporal/stream?${search.toString()}`;
+  const query = search.toString();
+  return query ? `${path}?${query}` : path;
+}
+
+export function streamLink(params: { cluster: string; namespace: string; name: string; run?: string }) {
+  return withQuery('/temporal/stream', params);
+}
+
+export function workflowLink(params: { cluster: string; namespace: string; workflowId: string; runId: string }) {
+  return withQuery('/temporal/workflow', params);
+}
+
+export function workflowsLink(params: { cluster?: string; namespace?: string } = {}) {
+  return withQuery('/temporal/workflows', params);
 }

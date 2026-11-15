@@ -8,7 +8,7 @@ import type { ClusterSummary, StreamSummary } from '@acarmisc/backstage-plugin-t
 import { useTemporalApi } from '../api';
 import { useLoad } from '../hooks';
 import { FreshnessBadge, RunStatusBadge } from './StatusBadge';
-import { streamLink, useUrlParams } from './links';
+import { streamLink, useUrlParams, workflowsLink } from './links';
 
 function statusDot(status: string): string {
   if (status === 'COMPLETED') return '#16a34a';
@@ -46,7 +46,9 @@ export function StreamsPage() {
 
   return (
     <Page themeId="tool">
-      <Header title="Temporal streams" subtitle={cluster && namespace ? `${cluster} / ${namespace}` : ''} />
+      <Header title="Temporal streams" subtitle={cluster && namespace ? `${cluster} / ${namespace}` : ''}>
+        <a href={workflowsLink({ cluster, namespace })}>Browse all workflows</a>
+      </Header>
       <Content>
         {clusters.error && <p role="alert">{clusters.error}</p>}
         {streams.error && <p role="alert">Could not load streams: {streams.error}</p>}

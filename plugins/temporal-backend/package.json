@@ -1,6 +1,6 @@
 {
   "name": "@acarmisc/backstage-plugin-temporal-backend",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Backend plugin for Temporal: stream monitoring and workflow diagram APIs with RBAC",
   "license": "Apache-2.0",
   "main": "src/index.ts",

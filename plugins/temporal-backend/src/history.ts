@@ -7,6 +7,7 @@ import type {
   RunStatus,
   StageRunState,
   StageState,
+  TemporalHistoryEvent,
   WorkflowGraph,
 } from '@acarmisc/backstage-plugin-temporal-common';
 
@@ -18,6 +19,15 @@ export interface Payloads {
 
 export interface HistoryEvent {
   eventId?: unknown;
+  workflowExecutionStartedEventAttributes?: {
+    input?: Payloads | null;
+  } | null;
+  workflowExecutionCompletedEventAttributes?: {
+    result?: Payloads | null;
+  } | null;
+  workflowExecutionFailedEventAttributes?: {
+    failure?: { message?: string | null } | null;
+  } | null;
   activityTaskScheduledEventAttributes?: {
     activityId?: string;
     input?: Payloads | null;
@@ -69,6 +79,22 @@ export function decodeFirstPayload(payloads: Payloads | null | undefined): unkno
 // Temporal event ids are Longs or numbers: compare them as strings.
 const idOf = (value: unknown) => String(value);
 
+/** Structural view of a protobuf Timestamp. `seconds` is a Long (or a number). */
+export interface TimestampLike {
+  seconds?: unknown;
+  nanos?: number | null;
+}
+
+export function timestampDate(ts: TimestampLike): Date {
+  return new Date(Number(String(ts.seconds ?? 0)) * 1000 + Math.floor((ts.nanos ?? 0) / 1e6));
+}
+
+/** Workflow input (its first argument) from the WorkflowExecutionStarted event. */
+export function workflowInputOf(history: HistoryEvent[]): unknown {
+  const started = history.find(event => event.workflowExecutionStartedEventAttributes);
+  return decodeFirstPayload(started?.workflowExecutionStartedEventAttributes?.input);
+}
+
 function stageNameOf(input: Payloads | null | undefined): string | undefined {
   const stage = decodeFirstPayload(input) as { name?: unknown } | undefined;
   return typeof stage?.name === 'string' ? stage.name : undefined;
@@ -84,6 +110,8 @@ export function workflowStatusOf(name: string | undefined): RunStatus {
     case 'CONTINUED_AS_NEW':
     case 'TIMED_OUT':
       return name;
+    case 'CANCELLED': // SDK spelling of CANCELED
+      return 'CANCELED';
     default:
       return 'UNKNOWN';
   }
@@ -242,4 +270,53 @@ export function deriveStages(input: DeriveInput): {
 /** Stage names of a graph, in declaration order. */
 export function stageNamesOf(graph: WorkflowGraph | undefined): string[] {
   return graph?.nodes.map(node => node.id) ?? [];
+}
+
+const WITHHELD = '[withheld: needs temporal.run.read]';
+
+/**
+ * One history event: its type is the attribute key without `EventAttributes`
+ * (`activityTaskScheduledEventAttributes` gives `ActivityTaskScheduled`).
+ */
+export function toHistoryEvent(event: object, includePayloads: boolean): TemporalHistoryEvent {
+  const record = event as Record<string, unknown>;
+  const key = Object.keys(record).find(name => name.endsWith('EventAttributes') && record[name]) ?? '';
+  const type = key.slice(0, -'EventAttributes'.length);
+  return {
+    eventId: Number(String(record.eventId)),
+    eventTime: timestampDate(record.eventTime as TimestampLike).toISOString(),
+    eventType: type.charAt(0).toUpperCase() + type.slice(1),
+    attributes: (plainValue(record[key], includePayloads) ?? {}) as Record<string, unknown>,
+  };
+}
+
+/** Plain JSON from decoded protobuf. Bytes are dropped; `key` picks timestamps out from durations. */
+function plainValue(value: unknown, includePayloads: boolean, key = ''): unknown {
+  if (value === null || typeof value !== 'object') {
+    return value;
+  }
+  if (ArrayBuffer.isView(value)) {
+    return undefined; // raw bytes are not shown
+  }
+  if (Array.isArray(value)) {
+    return value.map(item => plainValue(item, includePayloads));
+  }
+  if (typeof (value as { toNumber?: unknown }).toNumber === 'function') {
+    return (value as { toNumber(): number }).toNumber(); // Long
+  }
+  const record = value as Record<string, unknown>;
+  if (Array.isArray(record.payloads)) {
+    return includePayloads
+      ? record.payloads.map(payload => decodeFirstPayload({ payloads: [payload] }))
+      : WITHHELD;
+  }
+  // Only `...Time` fields are timestamps; `...Timeout` and friends are durations.
+  if (key.endsWith('Time') && 'seconds' in record && 'nanos' in record) {
+    return timestampDate(record as TimestampLike).toISOString();
+  }
+  return Object.fromEntries(
+    Object.entries(record)
+      .map(([name, item]) => [name, plainValue(item, includePayloads, name)] as const)
+      .filter(([, item]) => item !== undefined),
+  );
 }

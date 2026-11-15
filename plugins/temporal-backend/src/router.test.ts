@@ -95,4 +95,74 @@ describe('temporal router', () => {
       await server.close();
     }
   });
+
+  it('parses the workflow list parameters', async () => {
+    const listWorkflows = jest.fn(async () => ({ workflows: [] }));
+    const server = await start(allowAll, { listWorkflows: listWorkflows as never });
+    try {
+      const res = await fetch(
+        `${server.url}/workflows?cluster=staging&namespace=kb&status=FAILED,RUNNING&workflowType=Crm&startTime=2026-11-01T00:00:00Z&pageSize=500`,
+      );
+      expect(res.status).toBe(200);
+      expect(listWorkflows).toHaveBeenCalledWith('staging', 'kb', {
+        statuses: ['FAILED', 'RUNNING'],
+        workflowType: 'Crm',
+        startTime: '2026-11-01T00:00:00Z',
+        pageSize: 100,
+      });
+    } finally {
+      await server.close();
+    }
+  });
+
+  it('rejects an unknown status in the workflow list', async () => {
+    const listWorkflows = jest.fn(async () => ({ workflows: [] }));
+    const server = await start(allowAll, { listWorkflows: listWorkflows as never });
+    try {
+      const res = await fetch(`${server.url}/workflows?cluster=staging&namespace=kb&status=FAILED,BOGUS`);
+      expect(res.status).toBe(400);
+      expect(listWorkflows).not.toHaveBeenCalled();
+    } finally {
+      await server.close();
+    }
+  });
+
+  it('decodes an encoded slash in the workflow id', async () => {
+    const getWorkflow = jest.fn(async () => ({}));
+    const server = await start(allowAll, { getWorkflow: getWorkflow as never });
+    try {
+      await fetch(`${server.url}/workflows/kb/stream%2Fa%2F1/run-1?cluster=staging`);
+      expect(getWorkflow).toHaveBeenCalledWith('staging', 'kb', 'stream/a/1', 'run-1', true);
+    } finally {
+      await server.close();
+    }
+  });
+
+  it('withholds payloads from workflow detail and history without temporal.run.read', async () => {
+    const getWorkflow = jest.fn(async () => ({}));
+    const getHistory = jest.fn(async () => ({ events: [], truncated: false }));
+    const server = await start(
+      name => (name === temporalRunReadPermission.name ? AuthorizeResult.DENY : AuthorizeResult.ALLOW),
+      { getWorkflow: getWorkflow as never, getHistory: getHistory as never },
+    );
+    try {
+      await fetch(`${server.url}/workflows/kb/stream%2Fa%2F1/run-1?cluster=staging`);
+      await fetch(`${server.url}/workflows/kb/stream%2Fa%2F1/run-1/history?cluster=staging`);
+      expect(getWorkflow).toHaveBeenCalledWith('staging', 'kb', 'stream/a/1', 'run-1', false);
+      expect(getHistory).toHaveBeenCalledWith('staging', 'kb', 'stream/a/1', 'run-1', false);
+    } finally {
+      await server.close();
+    }
+  });
+
+  it('passes history payloads through when temporal.run.read is granted', async () => {
+    const getHistory = jest.fn(async () => ({ events: [], truncated: false }));
+    const server = await start(allowAll, { getHistory: getHistory as never });
+    try {
+      await fetch(`${server.url}/workflows/kb/run-1/run-2/history?cluster=staging`);
+      expect(getHistory).toHaveBeenCalledWith('staging', 'kb', 'run-1', 'run-2', true);
+    } finally {
+      await server.close();
+    }
+  });
 });

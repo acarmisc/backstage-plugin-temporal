@@ -35,6 +35,14 @@ other server/client combinations have not been validated here.
   freshness of the last success, recent statuses.
 - **Stream page** (`/temporal/stream`): recent runs of a stream, and the selected
   run in detail: the definition with each stage's state, output and errors.
+- **Workflows page** (`/temporal/workflows`): every workflow of an allowed
+  namespace, filtered by status, workflow type and start time, with paging.
+  Sorting by start time or duration applies to the loaded page only.
+- **Workflow page** (`/temporal/workflow`): one execution: metadata, a diagram
+  built from its history, input/result in a JSON viewer, the expandable event
+  history and, for scheduled runs, the schedule's spec and next runs. Input,
+  result, memo and history payloads need `temporal.run.read`; sensitive keys
+  are masked.
 - **Entity tab and card**: for catalog entities with the `temporal.io/*`
   annotations below.
 - **Definition page** (`/temporal/definition?location=<url>`): the diagram of a

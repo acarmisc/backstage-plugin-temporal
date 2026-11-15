@@ -83,3 +83,67 @@ export interface ClusterHealth {
   serverVersion?: string;
   error?: string;
 }
+
+/** One workflow execution in the workflow browser list. */
+export interface TemporalWorkflowSummary {
+  namespace: string;
+  workflowId: string;
+  runId: string;
+  workflowType: string;
+  taskQueue: string;
+  status: RunStatus;
+  startTime: string;
+  closeTime?: string;
+  durationSeconds?: number;
+  /** Schedule id, from the `TemporalScheduledById` search attribute. */
+  scheduledBy?: string;
+}
+
+export interface WorkflowListResponse {
+  workflows: TemporalWorkflowSummary[];
+  /** Opaque (base64); pass back to get the next page. Absent on the last page. */
+  nextPageToken?: string;
+}
+
+export interface WorkflowExecutionDetail extends TemporalWorkflowSummary {
+  historyLength?: number;
+  memo?: Record<string, unknown>;
+  searchAttributes?: Record<string, unknown>;
+  /** Decoded workflow input/result. Only sent with `temporal.run.read`, sensitive keys masked. */
+  input?: unknown;
+  result?: unknown;
+  /** Failure message, redacted. */
+  failure?: string;
+  uiUrl?: string;
+}
+
+export interface TemporalHistoryEvent {
+  eventId: number;
+  eventTime: string;
+  /** e.g. `WorkflowExecutionStarted`, `ActivityTaskScheduled`. */
+  eventType: string;
+  /** Raw event attributes. Payloads are decoded only with `temporal.run.read`. */
+  attributes: Record<string, unknown>;
+}
+
+export interface WorkflowHistoryResponse {
+  events: TemporalHistoryEvent[];
+  /** True when the history was longer than the backend's event cap. */
+  truncated: boolean;
+}
+
+export interface ScheduleDetail {
+  scheduleId: string;
+  paused: boolean;
+  note?: string;
+  spec: {
+    cronExpressions?: string[];
+    calendars?: Record<string, unknown>[];
+    intervals?: { every: string; offset?: string }[];
+    timezone?: string;
+  };
+  overlapPolicy?: string;
+  workflowType?: string;
+  recentActions: { scheduledAt: string; takenAt: string; workflowId?: string; runId?: string }[];
+  nextActionTimes: string[];
+}
