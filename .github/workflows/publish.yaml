@@ -102,6 +102,7 @@ jobs:
       - name: Build
         # Common first: the backend and frontend compile against its output.
         run: |
+          yarn tsc # package builds read declarations from dist-types
           yarn workspace @acarmisc/backstage-plugin-temporal-common build
           yarn workspace "$(node -p "require('./${{ steps.pkg.outputs.dir }}/package.json').name")" build
 
