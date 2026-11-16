@@ -171,6 +171,19 @@ export function WorkflowsPage() {
 
   const rows = list.data?.workflows ?? [];
 
+  // Suggestions for the type filter: every type seen so far, so narrowing to one
+  // type does not make the others disappear from the list.
+  const [seenTypes, setSeenTypes] = useState<string[]>([]);
+  useEffect(() => {
+    const found = (list.data?.workflows ?? []).map(w => w.workflowType);
+    if (found.length)
+      setSeenTypes(prev =>
+        found.every(t => prev.includes(t))
+          ? prev
+          : [...new Set([...prev, ...found])].sort(),
+      );
+  }, [list.data]);
+
   const uiBase = clusterInfo?.uiBaseUrl;
 
   const detailLink = (w: TemporalWorkflowSummary) =>
@@ -280,18 +293,39 @@ export function WorkflowsPage() {
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
+                {/* Label above, like the neighbouring Selects, so the fields line up. */}
+                <Typography
+                  component="label"
+                  htmlFor="workflow-type-filter"
+                  style={{
+                    display: 'block',
+                    fontWeight: 'bold',
+                    marginBottom: 4,
+                  }}
+                >
+                  Workflow type
+                </Typography>
                 <TextField
                   fullWidth
-                  label="Workflow type"
+                  id="workflow-type-filter"
                   variant="outlined"
                   size="small"
                   defaultValue={view.workflowType}
+                  inputProps={{
+                    list: 'workflow-type-suggestions',
+                    'aria-label': 'Workflow type',
+                  }}
                   onBlur={e => commitType(e.target.value.trim())}
                   onKeyDown={e => {
                     if (e.key === 'Enter')
                       commitType((e.target as HTMLInputElement).value.trim());
                   }}
                 />
+                <datalist id="workflow-type-suggestions">
+                  {seenTypes.map(t => (
+                    <option key={t} value={t} />
+                  ))}
+                </datalist>
               </Grid>
               <Grid item xs={12} sm={6} md={2}>
                 <Select
