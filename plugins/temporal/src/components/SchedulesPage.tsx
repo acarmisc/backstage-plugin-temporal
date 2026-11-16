@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Content, Header, Page } from '@backstage/core-components';
 import type { ClusterSummary, ScheduleListItem, ScheduleListResponse } from '@acarmisc/backstage-plugin-temporal-common';
 import { useTemporalApi } from '../api';
@@ -63,6 +63,23 @@ export function Timeline({ times }: { times: string[] }) {
 
 function ScheduleCard({ item, cluster, namespace }: { item: ScheduleListItem; cluster: string; namespace: string }) {
   const next = item.nextActionTimes[0];
+  let nextRun: ReactNode = 'Next run: none';
+  if (item.paused) nextRun = 'Next run: paused';
+  else if (next)
+    nextRun = (
+      <>
+        Next run: <strong>{relativeTime(next)}</strong> <span style={{ opacity: 0.7 }}>({new Date(next).toLocaleString()})</span>
+      </>
+    );
+  let lastRun: ReactNode = 'never';
+  if (item.lastRun)
+    lastRun = (
+      <>
+        <RunStatusBadge status={item.lastRun.status} />
+        <span style={{ opacity: 0.7 }}>{relativeTime(item.lastRun.startTime)}</span>
+      </>
+    );
+  else if (item.lastActionAt) lastRun = relativeTime(item.lastActionAt);
   return (
     <a
       href={scheduleLink({ cluster, namespace, scheduleId: item.scheduleId })}
@@ -75,28 +92,11 @@ function ScheduleCard({ item, cluster, namespace }: { item: ScheduleListItem; cl
       <div style={{ fontSize: 18, margin: '8px 0 2px' }}>{cadenceText(item.spec)}</div>
       <div style={{ fontSize: 13, opacity: 0.75 }}>{item.workflowType ?? '—'}</div>
       <div style={{ marginTop: 10, fontSize: 14 }}>
-        {item.paused ? (
-          'Next run: paused'
-        ) : next ? (
-          <>
-            Next run: <strong>{relativeTime(next)}</strong> <span style={{ opacity: 0.7 }}>({new Date(next).toLocaleString()})</span>
-          </>
-        ) : (
-          'Next run: none'
-        )}
+        {nextRun}
       </div>
       <div style={{ marginTop: 6, fontSize: 14, display: 'flex', gap: 8, alignItems: 'center' }}>
         Last run:{' '}
-        {item.lastRun ? (
-          <>
-            <RunStatusBadge status={item.lastRun.status} />
-            <span style={{ opacity: 0.7 }}>{relativeTime(item.lastRun.startTime)}</span>
-          </>
-        ) : item.lastActionAt ? (
-          relativeTime(item.lastActionAt)
-        ) : (
-          'never'
-        )}
+        {lastRun}
       </div>
       <Timeline times={item.paused ? [] : item.nextActionTimes} />
     </a>

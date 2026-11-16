@@ -20,8 +20,9 @@ export function relativeTime(iso: string, now = Date.now()): string {
   const diff = Date.parse(iso) - now;
   const s = Math.round(Math.abs(diff) / 1000);
   if (s < 45) return 'just now';
-  const [n, unit] =
-    s < 3600 ? [Math.round(s / 60), 'm'] : s < 86400 ? [Math.round(s / 3600), 'h'] : [Math.round(s / 86400), 'd'];
+  let [n, unit] = [Math.round(s / 60), 'm'] as [number, string];
+  if (s >= 86400) [n, unit] = [Math.round(s / 86400), 'd'];
+  else if (s >= 3600) [n, unit] = [Math.round(s / 3600), 'h'];
   return diff > 0 ? `in ${n}${unit}` : `${n}${unit} ago`;
 }
 
@@ -59,8 +60,8 @@ function calendarText(calendar: Record<string, unknown>): string {
 
 function intervalText(every: string): string {
   const ms = parseInt(every, 10);
-  const [n, unit] =
-    ms % 864e5 === 0 ? [ms / 864e5, 'day'] : ms % 36e5 === 0 ? [ms / 36e5, 'hour'] : ms % 6e4 === 0 ? [ms / 6e4, 'minute'] : [ms / 1000, 'second'];
+  const [size, unit] = ([[864e5, 'day'], [36e5, 'hour'], [6e4, 'minute']] as const).find(([sz]) => ms % sz === 0) ?? [1000, 'second'];
+  const n = ms / size;
   return n === 1 ? `Every ${unit}` : `Every ${n} ${unit}s`;
 }
 
