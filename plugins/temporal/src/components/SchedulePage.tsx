@@ -3,7 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Content, Header, Page } from '@backstage/core-components';
+import {
+  Content,
+  Header,
+  Page,
+  Table,
+  type TableColumn,
+} from '@backstage/core-components';
 import type { ScheduleDetail } from '@acarmisc/backstage-plugin-temporal-common';
 import { useTemporalApi } from '../api';
 import { useLoad } from '../hooks';
@@ -13,8 +19,8 @@ import { OwnerText, useStreamOwners } from './owners';
 import { card, StateBadge, Timeline } from './SchedulesPage';
 import { schedulesLink, useUrlParams, workflowLink } from './links';
 
-const cell = { padding: '6px 10px', borderBottom: '1px solid rgba(128,128,128,0.25)', textAlign: 'left' as const };
-const when = (iso: string) => `${new Date(iso).toLocaleString()} (${relativeTime(iso)})`;
+const when = (iso: string) =>
+  `${new Date(iso).toLocaleString()} (${relativeTime(iso)})`;
 
 /** One schedule: cadence, policy, upcoming runs and the workflows it recently started. */
 export function SchedulePage() {
@@ -27,31 +33,70 @@ export function SchedulePage() {
   const schedule = useLoad(
     () =>
       cluster && namespace && scheduleId
-        ? api.get<ScheduleDetail>(`/schedules/${encodeURIComponent(scheduleId)}`, { cluster, namespace })
+        ? api.get<ScheduleDetail>(
+            `/schedules/${encodeURIComponent(scheduleId)}`,
+            { cluster, namespace },
+          )
         : undefined,
     [api, cluster, namespace, scheduleId],
   );
   const s = schedule.data;
+  const actionColumns: TableColumn<ScheduleDetail['recentActions'][number]>[] =
+    [
+      { title: 'Taken at', field: 'takenAt', render: a => when(a.takenAt) },
+      {
+        title: 'Workflow',
+        sorting: false,
+        render: a =>
+          a.workflowId && a.runId ? (
+            <a
+              href={workflowLink({
+                cluster,
+                namespace,
+                workflowId: a.workflowId,
+                runId: a.runId,
+              })}
+            >
+              {a.workflowId}
+            </a>
+          ) : (
+            '—'
+          ),
+      },
+    ];
   const next = s?.nextActionTimes.slice(0, 5) ?? [];
 
   return (
     <Page themeId="tool">
-      <Header title={scheduleId || 'Schedule'} subtitle={`${cluster} / ${namespace}`} />
+      <Header
+        title={scheduleId || 'Schedule'}
+        subtitle={`${cluster} / ${namespace}`}
+      />
       <Content>
         <p>
           <a href={schedulesLink({ cluster, namespace })}>← All schedules</a>
         </p>
-        {schedule.error && <p role="alert">Could not load schedule: {schedule.error}</p>}
+        {schedule.error && (
+          <p role="alert">Could not load schedule: {schedule.error}</p>
+        )}
         {!s && !schedule.error && <p>Loading schedule…</p>}
         {s && (
           <div style={{ display: 'grid', gap: 16 }}>
             <section style={card}>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <h2 style={{ fontSize: 20, margin: 0 }}>{cadenceText(s.spec)}</h2>
+                <h2 style={{ fontSize: 20, margin: 0 }}>
+                  {cadenceText(s.spec)}
+                </h2>
                 <StateBadge paused={s.paused} />
               </div>
               {s.note && <p>{s.note}</p>}
-              <dl style={{ display: 'grid', gridTemplateColumns: 'max-content 1fr', gap: '4px 16px' }}>
+              <dl
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'max-content 1fr',
+                  gap: '4px 16px',
+                }}
+              >
                 <dt>Owner</dt>
                 <dd>
                   <OwnerText owner={owners.get(scheduleId)} />
@@ -63,7 +108,9 @@ export function SchedulePage() {
                 <dt>Timezone</dt>
                 <dd>{s.spec.timezone ?? 'UTC'}</dd>
               </dl>
-              {s.spec.calendars && s.spec.calendars.length > 0 && <JsonViewer value={s.spec.calendars} />}
+              {s.spec.calendars && s.spec.calendars.length > 0 && (
+                <JsonViewer value={s.spec.calendars} />
+              )}
             </section>
             <section style={card}>
               <h3 style={{ marginTop: 0 }}>Next runs</h3>
@@ -85,30 +132,16 @@ export function SchedulePage() {
               {s.recentActions.length === 0 ? (
                 <p>No actions yet.</p>
               ) : (
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr>
-                      <th style={cell}>Taken at</th>
-                      <th style={cell}>Workflow</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[...s.recentActions].reverse().map(a => (
-                      <tr key={`${a.takenAt}${a.workflowId}`}>
-                        <td style={cell}>{when(a.takenAt)}</td>
-                        <td style={cell}>
-                          {a.workflowId && a.runId ? (
-                            <a href={workflowLink({ cluster, namespace, workflowId: a.workflowId, runId: a.runId })}>
-                              {a.workflowId}
-                            </a>
-                          ) : (
-                            '—'
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <Table<ScheduleDetail['recentActions'][number]>
+                  options={{
+                    paging: false,
+                    search: false,
+                    toolbar: false,
+                    padding: 'dense',
+                  }}
+                  columns={actionColumns}
+                  data={[...s.recentActions].reverse()}
+                />
               )}
             </section>
           </div>

@@ -3,11 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import { renderInTestApp } from '@backstage/test-utils';
 import type { RunDetail as RunDetailData } from '@acarmisc/backstage-plugin-temporal-common';
 
 const get = jest.fn();
-jest.mock('../api', () => ({ useTemporalApi: () => ({ get }) }));
+// Stable identity: a fresh object per render would retrigger every `useLoad`.
+const api = { get };
+jest.mock('../api', () => ({ useTemporalApi: () => api }));
 jest.mock('./useIsDark', () => ({ useIsDark: () => false }));
 jest.mock('./WorkflowDiagram', () => ({ WorkflowDiagram: () => null }));
 
@@ -34,8 +37,18 @@ describe('RunDetail', () => {
       ],
     };
     get.mockResolvedValue(run);
-    render(<RunDetail cluster="staging" namespace="kb" workflowId={base.workflowId} />);
-    await waitFor(() => expect(screen.getByTestId('run-stage-review')).toHaveTextContent('running'));
+    await renderInTestApp(
+      <RunDetail
+        cluster="staging"
+        namespace="kb"
+        workflowId={base.workflowId}
+      />,
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByTestId('run-stage-review').closest('tr'),
+      ).toHaveTextContent('running'),
+    );
     expect(screen.getByText(/live/)).toBeInTheDocument();
   });
 
@@ -43,17 +56,39 @@ describe('RunDetail', () => {
     const run: RunDetailData = {
       ...base,
       status: 'FAILED',
-      stages: [{ stage: 'publish', state: 'failed', error: 'upload refused [REDACTED]' }],
+      stages: [
+        {
+          stage: 'publish',
+          state: 'failed',
+          error: 'upload refused [REDACTED]',
+        },
+      ],
     };
     get.mockResolvedValue(run);
-    render(<RunDetail cluster="staging" namespace="kb" workflowId={base.workflowId} />);
-    await waitFor(() => expect(screen.getByText('upload refused [REDACTED]')).toBeInTheDocument());
+    await renderInTestApp(
+      <RunDetail
+        cluster="staging"
+        namespace="kb"
+        workflowId={base.workflowId}
+      />,
+    );
+    await waitFor(() =>
+      expect(screen.getByText('upload refused [REDACTED]')).toBeInTheDocument(),
+    );
     expect(screen.queryByText(/live/)).not.toBeInTheDocument();
   });
 
   it('reports a backend error instead of an empty page', async () => {
     get.mockRejectedValue(new Error('403: missing permission temporal.read'));
-    render(<RunDetail cluster="staging" namespace="kb" workflowId={base.workflowId} />);
-    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('missing permission'));
+    await renderInTestApp(
+      <RunDetail
+        cluster="staging"
+        namespace="kb"
+        workflowId={base.workflowId}
+      />,
+    );
+    await waitFor(() =>
+      expect(screen.getByRole('alert')).toHaveTextContent('missing permission'),
+    );
   });
 });

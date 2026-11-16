@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import { renderInTestApp } from '@backstage/test-utils';
 import type { ClusterSummary } from '@acarmisc/backstage-plugin-temporal-common';
 
 const get = jest.fn();
@@ -16,12 +17,6 @@ jest.mock('./owners', () => ({
   useStreamOwners: () => mockOwners,
 }));
 jest.mock('../api', () => ({ useTemporalApi: () => api }));
-// The real Page/Header need a MUI theme; this test only cares about the requests.
-jest.mock('@backstage/core-components', () => ({
-  Page: ({ children }: { children?: unknown }) => <div>{children as never}</div>,
-  Header: ({ title }: { title?: string }) => <h1>{title}</h1>,
-  Content: ({ children }: { children?: unknown }) => <div>{children as never}</div>,
-}));
 
 import { StreamsPage } from './StreamsPage';
 
@@ -39,17 +34,22 @@ describe('StreamsPage', () => {
       return Promise.resolve([]);
     });
 
-    render(<StreamsPage />);
+    await renderInTestApp(<StreamsPage />);
 
     // Asking `/streams` without `cluster` is a 400 on the backend.
     expect(get).toHaveBeenCalledTimes(1);
     expect(get).toHaveBeenCalledWith('/clusters');
     expect(screen.queryByRole('alert')).toBeNull();
 
-    resolveClusters?.([{ name: 'temporal', namespaces: ['kb'] } as ClusterSummary]);
+    resolveClusters?.([
+      { name: 'temporal', namespaces: ['kb'] } as ClusterSummary,
+    ]);
 
     await waitFor(() =>
-      expect(get).toHaveBeenCalledWith('/streams', { cluster: 'temporal', namespace: 'kb' }),
+      expect(get).toHaveBeenCalledWith('/streams', {
+        cluster: 'temporal',
+        namespace: 'kb',
+      }),
     );
     expect(screen.queryByRole('alert')).toBeNull();
   });

@@ -3,8 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Content, Header, Page } from '@backstage/core-components';
-import type { ClusterSummary, StreamSummary } from '@acarmisc/backstage-plugin-temporal-common';
+import {
+  Content,
+  Header,
+  Page,
+  Table,
+  type TableColumn,
+} from '@backstage/core-components';
+import type {
+  ClusterSummary,
+  StreamSummary,
+} from '@acarmisc/backstage-plugin-temporal-common';
 import { useTemporalApi } from '../api';
 import { useLoad } from '../hooks';
 import { FreshnessBadge, RunStatusBadge } from './StatusBadge';
@@ -20,11 +29,10 @@ function statusDot(status: string): string {
 function scheduleText(stream: StreamSummary): string {
   if (!stream.schedule) return 'on demand';
   if (stream.schedule.paused) return 'paused';
-  if (stream.schedule.nextRunTime) return `next ${new Date(stream.schedule.nextRunTime).toLocaleString()}`;
+  if (stream.schedule.nextRunTime)
+    return `next ${new Date(stream.schedule.nextRunTime).toLocaleString()}`;
   return 'scheduled';
 }
-
-const cell = { padding: '6px 10px', borderBottom: '1px solid rgba(128,128,128,0.25)', textAlign: 'left' as const };
 
 /** All streams of one namespace: schedule, last run, freshness of the last success. */
 export function StreamsPage() {
@@ -34,7 +42,9 @@ export function StreamsPage() {
   const clusters = useLoad(() => api.get<ClusterSummary[]>('/clusters'), [api]);
 
   const cluster = params.get('cluster') ?? clusters.data?.[0]?.name;
-  const namespace = params.get('namespace') ?? clusters.data?.find(c => c.name === cluster)?.namespaces[0];
+  const namespace =
+    params.get('namespace') ??
+    clusters.data?.find(c => c.name === cluster)?.namespaces[0];
 
   // Both come from `/clusters`: requesting streams before it answers is a 400
   // (`query parameter "cluster" is required`) and leaves a stale error on screen.
@@ -46,49 +56,97 @@ export function StreamsPage() {
     [api, cluster, namespace],
   );
 
+  const columns: TableColumn<StreamSummary>[] = [
+    {
+      title: 'Stream',
+      field: 'name',
+      render: stream => (
+        <a
+          href={streamLink({
+            cluster: cluster!,
+            namespace: namespace!,
+            name: stream.name,
+          })}
+        >
+          {stream.name}
+        </a>
+      ),
+    },
+    {
+      title: 'Owner',
+      sorting: false,
+      render: stream => <OwnerText owner={owners.get(stream.name)} />,
+    },
+    {
+      title: 'Schedule',
+      sorting: false,
+      render: stream => scheduleText(stream),
+    },
+    {
+      title: 'Last run',
+      sorting: false,
+      render: stream =>
+        stream.lastRun ? (
+          <RunStatusBadge status={stream.lastRun.status} />
+        ) : (
+          '—'
+        ),
+    },
+    {
+      title: 'Last success',
+      sorting: false,
+      render: stream => (
+        <FreshnessBadge lastSuccessAt={stream.lastSuccess?.startTime} />
+      ),
+    },
+    {
+      title: 'Recent',
+      sorting: false,
+      render: stream => (
+        <span>
+          {stream.recentStatuses.map((st, i) => (
+            <span
+              key={i}
+              title={st}
+              style={{
+                display: 'inline-block',
+                width: 8,
+                height: 8,
+                borderRadius: 4,
+                marginRight: 3,
+                background: statusDot(st),
+              }}
+            />
+          ))}
+        </span>
+      ),
+    },
+  ];
+
   return (
     <Page themeId="tool">
-      <Header title="Temporal streams" subtitle={cluster && namespace ? `${cluster} / ${namespace}` : ''}>
+      <Header
+        title="Temporal streams"
+        subtitle={cluster && namespace ? `${cluster} / ${namespace}` : ''}
+      >
         <a href={workflowsLink({ cluster, namespace })}>Browse all workflows</a>
       </Header>
       <Content>
         {clusters.error && <p role="alert">{clusters.error}</p>}
-        {streams.error && <p role="alert">Could not load streams: {streams.error}</p>}
+        {streams.error && (
+          <p role="alert">Could not load streams: {streams.error}</p>
+        )}
         {streams.loading && !streams.data && <p>Loading streams…</p>}
-        {streams.data && streams.data.length === 0 && <p>No streams in this namespace.</p>}
-        {streams.data && streams.data.length > 0 && (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                <th style={cell}>Stream</th>
-                <th style={cell}>Owner</th>
-                <th style={cell}>Schedule</th>
-                <th style={cell}>Last run</th>
-                <th style={cell}>Last success</th>
-                <th style={cell}>Recent</th>
-              </tr>
-            </thead>
-            <tbody>
-              {streams.data.map(stream => (
-                <tr key={stream.name}>
-                  <td style={cell}>
-                    <a href={streamLink({ cluster: cluster!, namespace: namespace!, name: stream.name })}>
-                      {stream.name}
-                    </a>
-                  </td>
-                  <td style={cell}><OwnerText owner={owners.get(stream.name)} /></td>
-                  <td style={cell}>{scheduleText(stream)}</td>
-                  <td style={cell}>{stream.lastRun ? <RunStatusBadge status={stream.lastRun.status} /> : '—'}</td>
-                  <td style={cell}>
-                    <FreshnessBadge lastSuccessAt={stream.lastSuccess?.startTime} />
-                  </td>
-                  <td style={cell}>{stream.recentStatuses.map((s, i) => (
-                    <span key={i} title={s} style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 4, marginRight: 3, background: statusDot(s) }} />
-                  ))}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {streams.data && (
+          <Table<StreamSummary>
+            title="Streams"
+            options={{ paging: false, search: false, padding: 'dense' }}
+            columns={columns}
+            data={streams.data}
+            emptyContent={
+              <p style={{ padding: 16 }}>No streams in this namespace.</p>
+            }
+          />
         )}
       </Content>
     </Page>
