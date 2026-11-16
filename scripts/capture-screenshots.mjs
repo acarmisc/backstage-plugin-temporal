@@ -103,7 +103,12 @@ async function shot(route, name, { wait = 3000 } = {}) {
   const text = await page.innerText('body');
   const problem = text.match(PROBLEM);
   if (problem) console.warn(`WARN ${name}: page shows "${problem[0]}"`);
+  // Backstage scrolls an inner container, so fullPage alone clips: grow the viewport to the tallest element.
+  const height = await page.evaluate(() => Math.max(...[...document.querySelectorAll('*')].map(e => e.scrollHeight)));
+  await page.setViewportSize({ width: 1480, height: Math.max(900, Math.min(height, 4000)) });
+  await page.waitForTimeout(500);
   await page.screenshot({ path: path.join(OUT, `${name}.png`), fullPage: true });
+  await page.setViewportSize({ width: 1480, height: 900 });
   console.log('saved', name);
 }
 

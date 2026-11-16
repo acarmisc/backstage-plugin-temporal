@@ -5,7 +5,7 @@
 
 import { Fragment, useMemo, type ReactNode } from 'react';
 import { Content, Header, InfoCard, Link, Page, Table, type TableColumn } from '@backstage/core-components';
-import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography } from '@material-ui/core';
+import { Accordion, AccordionDetails, AccordionSummary, Card, CardContent, Grid, Typography } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import type {
   ScheduleDetail,
@@ -25,7 +25,7 @@ import { WorkflowDiagram } from './WorkflowDiagram';
 
 type ScheduleAction = ScheduleDetail['recentActions'][number];
 const NOT_AVAILABLE = 'Not available (requires temporal.run.read)';
-const tableOptions = { paging: false, search: false, toolbar: false, padding: 'dense' as const };
+const tableOptions = { paging: false, search: false, padding: 'dense' as const };
 
 const when = (value?: string) => (value ? new Date(value).toLocaleString() : '—');
 
@@ -34,9 +34,16 @@ function Kpis({ items }: { items: [string, ReactNode][] }) {
     <Grid container spacing={2}>
       {items.map(([label, value]) => (
         <Grid item key={label} xs={12} sm={6} md={3}>
-          <InfoCard variant="gridItem" title={label}>
-            <div style={{ wordBreak: 'break-all' }}>{value}</div>
-          </InfoCard>
+          <Card>
+            <CardContent>
+              <Typography variant="overline" color="textSecondary">
+                {label}
+              </Typography>
+              <Typography variant="body1" component="div" style={{ wordBreak: 'break-all' }}>
+                {value}
+              </Typography>
+            </CardContent>
+          </Card>
         </Grid>
       ))}
     </Grid>
@@ -60,7 +67,6 @@ function Payload({ label, value, missing }: { label: string; value: unknown; mis
 function ScheduleCards({ schedule, cluster, namespace }: { schedule: ScheduleDetail; cluster: string; namespace: string }) {
   const { spec } = schedule;
   const actions: TableColumn<ScheduleAction>[] = [
-    { title: 'Scheduled at', render: a => when(a.scheduledAt) },
     { title: 'Taken at', render: a => when(a.takenAt) },
     {
       title: 'Workflow',
@@ -202,7 +208,14 @@ export function WorkflowPage() {
 
   const crumbs = (
     <nav aria-label="Breadcrumb">
-      <Link to="/temporal">Temporal</Link> › <Link to={workflowsLink({ cluster, namespace })}>Workflows</Link> › {workflowId}
+      <Link to="/temporal" color="inherit">
+        Temporal
+      </Link>{' '}
+      ›{' '}
+      <Link to={workflowsLink({ cluster, namespace })} color="inherit">
+        Workflows
+      </Link>{' '}
+      › {workflowId}
     </nav>
   );
 
