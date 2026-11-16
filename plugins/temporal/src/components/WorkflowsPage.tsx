@@ -15,7 +15,7 @@ import { useTemporalApi } from '../api';
 import { useLoad } from '../hooks';
 import { formatDuration } from './format';
 import { RunStatusBadge } from './StatusBadge';
-import { useUrlParams, withQuery, workflowLink } from './links';
+import { schedulesLink, useUrlParams, withQuery, workflowLink } from './links';
 
 const STATUSES: RunStatus[] = ['RUNNING', 'COMPLETED', 'FAILED', 'CANCELED', 'TERMINATED', 'TIMED_OUT'];
 const RANGE_KEYS = ['any', '24h', '7d', '30d', 'custom'] as const;
@@ -259,7 +259,8 @@ export function WorkflowsPage() {
           <main style={{ flex: '1 1 480px', minWidth: 0 }}>
             <button type="button" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(o => !o)} style={{ marginBottom: 8 }}>
               {sidebarOpen ? 'Hide filters' : 'Show filters'}
-            </button>
+            </button>{' '}
+            <a href={schedulesLink({ cluster, namespace })}>Schedules</a>
             {clusters.error && <p role="alert">{clusters.error}</p>}
             {list.error && <p role="alert">Could not load workflows: {list.error}</p>}
             {list.loading && !list.data && <p>Loading workflows…</p>}

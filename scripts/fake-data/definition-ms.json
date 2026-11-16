@@ -1,0 +1,115 @@
+{
+  "id": "demo-multisorgente",
+  "name": "demo-multisorgente",
+  "nodes": [
+    {
+      "id": "jira",
+      "label": "jira",
+      "kind": "cli",
+      "detail": "jira-kb capture",
+      "params": {},
+      "gate": false,
+      "group": "source",
+      "optional": false
+    },
+    {
+      "id": "confluence",
+      "label": "confluence",
+      "kind": "k8s_job",
+      "detail": "example-ns/example-confluence-driver",
+      "params": {},
+      "gate": false,
+      "group": "source",
+      "optional": true
+    },
+    {
+      "id": "qualifica",
+      "label": "qualifica",
+      "kind": "qualify",
+      "params": {
+        "input": [
+          "{stage:jira}",
+          "{stage:confluence}"
+        ],
+        "llm": {
+          "model": "deepseek-v4-flash",
+          "criteria": "solo conoscenza di dominio"
+        }
+      },
+      "gate": false,
+      "group": "qualify",
+      "optional": false
+    },
+    {
+      "id": "sintesi",
+      "label": "sintesi",
+      "kind": "synthesize",
+      "params": {
+        "input": "{stage:qualifica}",
+        "mode": "llm",
+        "llm": {
+          "model": "claude-haiku-4-5",
+          "prompt": "{content}"
+        }
+      },
+      "gate": false,
+      "group": "synthesize",
+      "optional": false
+    },
+    {
+      "id": "push",
+      "label": "push",
+      "kind": "git",
+      "detail": "push",
+      "params": {
+        "op": "push"
+      },
+      "gate": false,
+      "group": "publish",
+      "optional": false
+    },
+    {
+      "id": "pubblica",
+      "label": "pubblica",
+      "kind": "kb_sync",
+      "detail": "p",
+      "params": {
+        "source_dir": "x",
+        "prefix": "p",
+        "kb_id": "K1",
+        "ds_id": "D1"
+      },
+      "gate": false,
+      "group": "publish",
+      "optional": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "jira",
+      "to": "qualifica"
+    },
+    {
+      "from": "confluence",
+      "to": "qualifica"
+    },
+    {
+      "from": "qualifica",
+      "to": "sintesi"
+    },
+    {
+      "from": "sintesi",
+      "to": "push"
+    },
+    {
+      "from": "push",
+      "to": "pubblica"
+    }
+  ],
+  "meta": {
+    "source": "kbflow",
+    "queues": [
+      "kb-K1"
+    ]
+  }
+}

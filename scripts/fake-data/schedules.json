@@ -1,0 +1,94 @@
+{
+  "schedules": [
+    {
+      "scheduleId": "jira-sync",
+      "paused": false,
+      "workflowType": "IngestJira",
+      "spec": {
+        "cronExpressions": [
+          "0 */2 * * *"
+        ],
+        "timezone": "UTC"
+      },
+      "nextActionTimes": [
+        "2026-11-16T08:00:00.000Z",
+        "2026-11-16T10:00:00.000Z",
+        "2026-11-16T12:00:00.000Z"
+      ],
+      "lastActionAt": "2026-11-16T06:00:00.000Z",
+      "lastRun": {
+        "workflowId": "IngestJira-2026-11-16T06:00:00Z",
+        "runId": "9cd36e58-4784-4e74-a28f-c3d3a76ce3fb",
+        "status": "RUNNING",
+        "startTime": "2026-11-16T06:00:00.000Z"
+      }
+    },
+    {
+      "scheduleId": "confluence-hourly",
+      "paused": false,
+      "workflowType": "IngestConfluence",
+      "spec": {
+        "intervals": [
+          {
+            "every": "3600000ms",
+            "offset": "900000ms"
+          }
+        ],
+        "timezone": "UTC"
+      },
+      "nextActionTimes": [
+        "2026-11-16T07:15:00.000Z",
+        "2026-11-16T08:15:00.000Z",
+        "2026-11-16T09:15:00.000Z"
+      ],
+      "lastActionAt": "2026-11-16T06:15:00.000Z",
+      "lastRun": {
+        "workflowId": "IngestConfluence-2026-11-16T06:15:00Z",
+        "runId": "0913528c-4e78-4448-aca2-440e89f754e5",
+        "status": "COMPLETED",
+        "startTime": "2026-11-16T06:15:00.000Z"
+      }
+    },
+    {
+      "scheduleId": "reindex-weekly",
+      "paused": false,
+      "workflowType": "ReindexKb",
+      "spec": {
+        "cronExpressions": [
+          "0 2 * * 0"
+        ],
+        "timezone": "UTC"
+      },
+      "nextActionTimes": [
+        "2026-11-22T00:00:00.000Z"
+      ],
+      "lastActionAt": "2026-11-15T00:00:00.000Z",
+      "lastRun": {
+        "workflowId": "ReindexKb-2026-11-15T00:00:00Z",
+        "runId": "8115b66e-101d-4ab2-a174-6a50854f74d5",
+        "status": "COMPLETED",
+        "startTime": "2026-11-15T00:00:00.000Z"
+      }
+    },
+    {
+      "scheduleId": "wiki-evidence-weekly",
+      "paused": true,
+      "note": "Paused until the evidence index migration (KB-412) is done",
+      "workflowType": "EvidenceExtract",
+      "spec": {
+        "cronExpressions": [
+          "0 3 * * 1"
+        ],
+        "timezone": "UTC"
+      },
+      "nextActionTimes": [],
+      "lastActionAt": "2026-11-10T01:00:00.000Z",
+      "lastRun": {
+        "workflowId": "EvidenceExtract-2026-11-10T01:00:00Z",
+        "runId": "3e3de1da-88af-482c-a3f6-108d8f1a5210",
+        "status": "COMPLETED",
+        "startTime": "2026-11-10T01:00:00.000Z"
+      }
+    }
+  ]
+}

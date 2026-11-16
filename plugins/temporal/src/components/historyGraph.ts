@@ -50,6 +50,7 @@ function nodeOpenedBy(event: TemporalHistoryEvent): WorkflowNode | undefined {
         detail: text(a.activityId) && `#${a.activityId}`,
       };
     }
+    case 'StartChildWorkflowExecutionInitiated':
     case 'ChildWorkflowExecutionInitiated':
       return { id: `child-${event.eventId}`, kind: 'child', label: typeName(a.workflowType) ?? 'child workflow' };
     case 'TimerStarted':

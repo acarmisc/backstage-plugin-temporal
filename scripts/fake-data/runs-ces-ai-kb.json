@@ -1,0 +1,36 @@
+[
+  {
+    "workflowId": "stream/ces-ai-kb/20261114T120000",
+    "status": "RUNNING",
+    "startTime": "2026-11-14T12:00:00Z",
+    "durationSeconds": 1842
+  },
+  {
+    "workflowId": "stream/ces-ai-kb/20261113T180000",
+    "status": "COMPLETED",
+    "startTime": "2026-11-13T18:00:00Z",
+    "closeTime": "2026-11-13T18:22:10Z",
+    "durationSeconds": 1330
+  },
+  {
+    "workflowId": "stream/ces-ai-kb/20261113T120000",
+    "status": "COMPLETED",
+    "startTime": "2026-11-13T12:00:00Z",
+    "closeTime": "2026-11-13T12:19:40Z",
+    "durationSeconds": 1180
+  },
+  {
+    "workflowId": "stream/ces-ai-kb/20261113T060000",
+    "status": "FAILED",
+    "startTime": "2026-11-13T06:00:00Z",
+    "closeTime": "2026-11-13T06:04:12Z",
+    "durationSeconds": 252
+  },
+  {
+    "workflowId": "stream/ces-ai-kb/20261113T000000",
+    "status": "COMPLETED",
+    "startTime": "2026-11-13T00:00:00Z",
+    "closeTime": "2026-11-13T00:21:05Z",
+    "durationSeconds": 1265
+  }
+]

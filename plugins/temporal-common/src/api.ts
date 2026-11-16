@@ -132,16 +132,37 @@ export interface WorkflowHistoryResponse {
   truncated: boolean;
 }
 
+export interface ScheduleSpecView {
+  cronExpressions?: string[];
+  calendars?: Record<string, unknown>[];
+  intervals?: { every: string; offset?: string }[];
+  timezone?: string;
+}
+
+/** One row of `GET /schedules`. Action arguments are never included. */
+export interface ScheduleListItem {
+  scheduleId: string;
+  paused: boolean;
+  note?: string;
+  workflowType?: string;
+  spec: ScheduleSpecView;
+  /** Upcoming action times, ISO, soonest first. */
+  nextActionTimes: string[];
+  /** When the most recent action was taken. */
+  lastActionAt?: string;
+  /** Newest workflow started by this schedule, when visibility knows it. */
+  lastRun?: { workflowId: string; runId: string; status: RunStatus; startTime: string };
+}
+
+export interface ScheduleListResponse {
+  schedules: ScheduleListItem[];
+}
+
 export interface ScheduleDetail {
   scheduleId: string;
   paused: boolean;
   note?: string;
-  spec: {
-    cronExpressions?: string[];
-    calendars?: Record<string, unknown>[];
-    intervals?: { every: string; offset?: string }[];
-    timezone?: string;
-  };
+  spec: ScheduleSpecView;
   overlapPolicy?: string;
   workflowType?: string;
   recentActions: { scheduledAt: string; takenAt: string; workflowId?: string; runId?: string }[];

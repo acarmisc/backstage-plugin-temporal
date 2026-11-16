@@ -96,6 +96,26 @@ describe('temporal router', () => {
     }
   });
 
+  it('lists schedules for a namespace and requires temporal.read', async () => {
+    const listSchedules = jest.fn(async () => ({ schedules: [] }));
+    const open = await start(allowAll, { listSchedules: listSchedules as never });
+    try {
+      expect((await fetch(`${open.url}/schedules`)).status).toBe(400);
+      const res = await fetch(`${open.url}/schedules?cluster=staging&namespace=kb`);
+      expect(res.status).toBe(200);
+      expect(await res.json()).toEqual({ schedules: [] });
+      expect(listSchedules).toHaveBeenCalledWith('staging', 'kb');
+    } finally {
+      await open.close();
+    }
+    const denied = await start(() => AuthorizeResult.DENY, { listSchedules: listSchedules as never });
+    try {
+      expect((await fetch(`${denied.url}/schedules?cluster=staging&namespace=kb`)).status).toBe(403);
+    } finally {
+      await denied.close();
+    }
+  });
+
   it('parses the workflow list parameters', async () => {
     const listWorkflows = jest.fn(async () => ({ workflows: [] }));
     const server = await start(allowAll, { listWorkflows: listWorkflows as never });

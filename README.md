@@ -39,10 +39,16 @@ other server/client combinations have not been validated here.
   namespace, filtered by status, workflow type and start time, with paging.
   Sorting by start time or duration applies to the loaded page only.
 - **Workflow page** (`/temporal/workflow`): one execution: metadata, a diagram
-  built from its history, input/result in a JSON viewer, the expandable event
-  history and, for scheduled runs, the schedule's spec and next runs. Input,
-  result, memo and history payloads need `temporal.run.read`; sensitive keys
-  are masked.
+  of its activities and timers from its history (colours show completed,
+  running, pending, failed and cancelled steps), the failure message, input and
+  result in a JSON viewer, the expandable event history and, for scheduled runs,
+  the schedule's spec and next runs. Input, result, memo and history payloads
+  need `temporal.run.read`; sensitive keys are masked.
+- **Schedules page** (`/temporal/schedules`): the namespace's Temporal Schedules
+  as cards, active or paused, with cadence, next runs and last run. Filterable
+  by state.
+- **Schedule page** (`/temporal/schedule`): one schedule: cadence, timezone,
+  overlap policy, upcoming runs and the workflows it recently started.
 - **Entity tab and card**: for catalog entities with the `temporal.io/*`
   annotations below.
 - **Definition page** (`/temporal/definition?location=<url>`): the diagram of a
@@ -62,6 +68,36 @@ other server/client combinations have not been validated here.
 | Definition (single source) | Definition (parallel sources) |
 |---|---|
 | ![Definition](docs/images/definition.png) | ![Definition DAG](docs/images/definition-dag.png) |
+
+| Workflow browser | Workflow detail (completed, scheduled) |
+|---|---|
+| ![Workflows](docs/images/workflows.png) | ![Workflow detail](docs/images/workflow-detail.png) |
+
+| Running workflow (pending activity, timer) | Failed workflow (activity error) |
+|---|---|
+| ![Running workflow](docs/images/workflow-running.png) | ![Failed workflow](docs/images/workflow-failed.png) |
+
+| Completed reindex (timer, activity) | Schedules |
+|---|---|
+| ![Reindex workflow](docs/images/workflow-reindex.png) | ![Schedules](docs/images/schedules.png) |
+
+| Schedule detail |
+|---|
+| ![Schedule detail](docs/images/schedule-detail.png) |
+
+The screenshots use fake data from `scripts/fake-data/`. Regenerate them with:
+
+```sh
+yarn build                                          # builds temporal-common, which the generator imports
+node scripts/gen-fake-data.mjs                      # writes scripts/fake-data/*.json (committed)
+TEMPORAL_DEV_TOKEN=dev-screenshot-token yarn start  # frontend :3000, backend :7007
+PLAYWRIGHT_MODULE=<path to playwright> node scripts/capture-screenshots.mjs
+```
+
+`PLAYWRIGHT_MODULE` defaults to `playwright`; `CHROME_PATH` defaults to the macOS
+Google Chrome app. Times in the data hang off the anchor in
+`gen-fake-data.mjs` (`FAKE_NOW` overrides it), so labels such as "in 3h" are
+right near that time. Regenerate with a new `FAKE_NOW` once they drift.
 
 ## Layout
 

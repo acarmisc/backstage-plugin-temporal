@@ -13,4 +13,6 @@ export { StreamsPage } from './components/StreamsPage';
 export { StreamPage } from './components/StreamPage';
 export { WorkflowsPage } from './components/WorkflowsPage';
 export { WorkflowPage } from './components/WorkflowPage';
+export { SchedulesPage } from './components/SchedulesPage';
+export { SchedulePage } from './components/SchedulePage';
 export { JsonViewer } from './components/JsonViewer';

@@ -30,3 +30,11 @@ export function workflowLink(params: { cluster: string; namespace: string; workf
 export function workflowsLink(params: { cluster?: string; namespace?: string } = {}) {
   return withQuery('/temporal/workflows', params);
 }
+
+export function schedulesLink(params: { cluster?: string; namespace?: string } = {}) {
+  return withQuery('/temporal/schedules', params);
+}
+
+export function scheduleLink(params: { cluster: string; namespace: string; scheduleId: string }) {
+  return withQuery('/temporal/schedule', params);
+}

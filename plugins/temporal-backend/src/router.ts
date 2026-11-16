@@ -192,6 +192,13 @@ export function createRouter({
     );
   });
 
+  router.get('/schedules', async (req, res) => {
+    if (!(await guard(req, res))) return;
+    const cluster = required(req.query.cluster, 'cluster');
+    const namespace = required(req.query.namespace, 'namespace');
+    res.json(await service.listSchedules(cluster, namespace));
+  });
+
   router.get('/schedules/:scheduleId', async (req, res) => {
     if (!(await guard(req, res))) return;
     const cluster = required(req.query.cluster, 'cluster');

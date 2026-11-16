@@ -3,10 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Fragment, useMemo, useState, type ReactNode } from 'react';
-import { Content, Header, Page } from '@backstage/core-components';
+import { Fragment, useMemo, type ReactNode } from 'react';
+import { Content, Header, InfoCard, Link, Page, Table, type TableColumn } from '@backstage/core-components';
+import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography } from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import type {
   ScheduleDetail,
+  TemporalHistoryEvent,
   WorkflowExecutionDetail,
   WorkflowHistoryResponse,
 } from '@acarmisc/backstage-plugin-temporal-common';
@@ -17,100 +20,105 @@ import { formatDuration } from './format';
 import { JsonViewer } from './JsonViewer';
 import { RunStatusBadge } from './StatusBadge';
 import { useIsDark } from './useIsDark';
-import { useUrlParams, workflowLink, workflowsLink } from './links';
+import { scheduleLink, useUrlParams, workflowLink, workflowsLink } from './links';
 import { WorkflowDiagram } from './WorkflowDiagram';
 
-const card = { border: '1px solid rgba(128,128,128,0.3)', borderRadius: 8, padding: 16, marginBottom: 16 };
-const cell = { padding: '6px 10px', borderBottom: '1px solid rgba(128,128,128,0.25)', textAlign: 'left' as const };
-const plainButton = { background: 'none', border: 0, padding: 0, font: 'inherit', color: 'inherit', cursor: 'pointer' };
+type ScheduleAction = ScheduleDetail['recentActions'][number];
 const NOT_AVAILABLE = 'Not available (requires temporal.run.read)';
+const tableOptions = { paging: false, search: false, toolbar: false, padding: 'dense' as const };
 
 const when = (value?: string) => (value ? new Date(value).toLocaleString() : '—');
 
-function Chips({ items }: { items: [string, ReactNode][] }) {
+function Kpis({ items }: { items: [string, ReactNode][] }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 8 }}>
+    <Grid container spacing={2}>
       {items.map(([label, value]) => (
-        <div key={label} style={{ border: '1px solid rgba(128,128,128,0.25)', borderRadius: 6, padding: '6px 10px', minWidth: 0 }}>
-          <div style={{ fontSize: 11, opacity: 0.7, textTransform: 'uppercase' }}>{label}</div>
-          <div style={{ wordBreak: 'break-all' }}>{value}</div>
-        </div>
+        <Grid item key={label} xs={12} sm={6} md={3}>
+          <InfoCard variant="gridItem" title={label}>
+            <div style={{ wordBreak: 'break-all' }}>{value}</div>
+          </InfoCard>
+        </Grid>
       ))}
-    </div>
+    </Grid>
   );
 }
 
+/** A collapsed block holding one payload (input, result, calendar specs). */
 function Payload({ label, value, missing }: { label: string; value: unknown; missing: string }) {
   return (
-    <div style={{ minWidth: 0 }}>
-      <h3 style={{ fontSize: 14, margin: '0 0 6px' }}>{label}</h3>
-      {value === undefined ? <p style={{ margin: 0, opacity: 0.7 }}>{missing}</p> : <JsonViewer value={value} />}
-    </div>
+    <Accordion>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography variant="subtitle1">{label}</Typography>
+      </AccordionSummary>
+      <AccordionDetails style={{ display: 'block', minWidth: 0 }}>
+        {value === undefined ? <Typography color="textSecondary">{missing}</Typography> : <JsonViewer value={value} />}
+      </AccordionDetails>
+    </Accordion>
   );
 }
 
-function ScheduleView({ schedule, cluster, namespace }: { schedule: ScheduleDetail; cluster: string; namespace: string }) {
+function ScheduleCards({ schedule, cluster, namespace }: { schedule: ScheduleDetail; cluster: string; namespace: string }) {
   const { spec } = schedule;
+  const actions: TableColumn<ScheduleAction>[] = [
+    { title: 'Scheduled at', render: a => when(a.scheduledAt) },
+    { title: 'Taken at', render: a => when(a.takenAt) },
+    {
+      title: 'Workflow',
+      render: a =>
+        a.workflowId && a.runId ? (
+          <Link to={workflowLink({ cluster, namespace, workflowId: a.workflowId, runId: a.runId })}>{a.workflowId}</Link>
+        ) : (
+          '—'
+        ),
+    },
+  ];
+  const meta: [string, ReactNode][] = [
+    ['Schedule ID', <Link to={scheduleLink({ cluster, namespace, scheduleId: schedule.scheduleId })}>{schedule.scheduleId}</Link>],
+    ['State', schedule.paused ? 'Paused' : 'Active'],
+    ['Note', schedule.note ?? '—'],
+    ['Cron', spec.cronExpressions?.join(', ') || '—'],
+    ['Intervals', spec.intervals?.map(i => `every ${i.every}${i.offset ? ` offset ${i.offset}` : ''}`).join(', ') || '—'],
+    ['Timezone', spec.timezone ?? '—'],
+    ['Overlap policy', schedule.overlapPolicy ?? '—'],
+    ['Workflow type', schedule.workflowType ?? '—'],
+  ];
   return (
     <>
-      <Chips
-        items={[
-          ['Schedule ID', schedule.scheduleId],
-          ['State', schedule.paused ? 'Paused' : 'Active'],
-          ['Note', schedule.note ?? '—'],
-          ['Cron', spec.cronExpressions?.join(', ') || '—'],
-          ['Intervals', spec.intervals?.map(i => `every ${i.every}${i.offset ? ` offset ${i.offset}` : ''}`).join(', ') || '—'],
-          ['Timezone', spec.timezone ?? '—'],
-          ['Overlap policy', schedule.overlapPolicy ?? '—'],
-          ['Workflow type', schedule.workflowType ?? '—'],
-        ]}
-      />
-      {spec.calendars && spec.calendars.length > 0 && (
-        <div style={{ marginTop: 12 }}>
-          <Payload label="Calendar specs" value={spec.calendars} missing={NOT_AVAILABLE} />
-        </div>
-      )}
-      <h3 style={{ fontSize: 14 }}>Recent actions</h3>
-      {schedule.recentActions.length === 0 ? (
-        <p>No actions yet.</p>
-      ) : (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={cell}>Scheduled at</th>
-              <th style={cell}>Taken at</th>
-              <th style={cell}>Workflow</th>
-            </tr>
-          </thead>
-          <tbody>
-            {schedule.recentActions.map((action, i) => (
-              <tr key={i}>
-                <td style={cell}>{when(action.scheduledAt)}</td>
-                <td style={cell}>{when(action.takenAt)}</td>
-                <td style={cell}>
-                  {action.workflowId && action.runId ? (
-                    <a href={workflowLink({ cluster, namespace, workflowId: action.workflowId, runId: action.runId })}>
-                      {action.workflowId}
-                    </a>
-                  ) : (
-                    '—'
-                  )}
-                </td>
-              </tr>
+      <Grid item xs={12} md={4}>
+        <InfoCard title="Schedule">
+          <dl style={{ display: 'grid', gridTemplateColumns: 'max-content 1fr', gap: '4px 16px', margin: 0 }}>
+            {meta.map(([k, v]) => (
+              <Fragment key={k}>
+                <dt style={{ opacity: 0.7 }}>{k}</dt>
+                <dd style={{ margin: 0, wordBreak: 'break-all' }}>{v}</dd>
+              </Fragment>
             ))}
-          </tbody>
-        </table>
-      )}
-      <h3 style={{ fontSize: 14 }}>Upcoming runs</h3>
-      {schedule.nextActionTimes.length === 0 ? (
-        <p>None scheduled.</p>
-      ) : (
-        <ul>
-          {schedule.nextActionTimes.map(t => (
-            <li key={t}>{when(t)}</li>
-          ))}
-        </ul>
-      )}
+          </dl>
+          {spec.calendars && spec.calendars.length > 0 && (
+            <div style={{ marginTop: 12 }}>
+              <Payload label="Calendar specs" value={spec.calendars} missing={NOT_AVAILABLE} />
+            </div>
+          )}
+        </InfoCard>
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <Table<ScheduleAction>
+          title="Recent actions"
+          options={tableOptions}
+          columns={actions}
+          data={schedule.recentActions}
+          emptyContent={<Typography style={{ padding: 16 }}>No actions yet.</Typography>}
+        />
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <Table<{ t: string }>
+          title="Upcoming runs"
+          options={tableOptions}
+          columns={[{ title: 'Time', render: r => when(r.t) }]}
+          data={schedule.nextActionTimes.map(t => ({ t }))}
+          emptyContent={<Typography style={{ padding: 16 }}>None scheduled.</Typography>}
+        />
+      </Grid>
     </>
   );
 }
@@ -146,15 +154,6 @@ export function WorkflowPage() {
 
   const events = useMemo(() => history.data?.events ?? [], [history.data]);
   const built = useMemo(() => buildHistoryGraph(events), [events]);
-  const [open, setOpen] = useState<ReadonlySet<number>>(() => new Set());
-  const toggle = (id: number) =>
-    setOpen(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-
   const d = detail.data;
 
   let diagram: ReactNode;
@@ -170,20 +169,40 @@ export function WorkflowPage() {
     );
   }
 
-  let scheduleBody: ReactNode;
+  const eventColumns: TableColumn<TemporalHistoryEvent>[] = [
+    { title: 'Event ID', field: 'eventId', width: '120px' },
+    { title: 'Time', render: e => when(e.eventTime) },
+    { title: 'Type', field: 'eventType' },
+  ];
+
+  let scheduleSection: ReactNode;
   if (!scheduledBy) {
-    scheduleBody = <p>Not started by a Temporal Schedule.</p>;
+    scheduleSection = (
+      <Grid item xs={12}>
+        <InfoCard title="Schedule">Not started by a Temporal Schedule.</InfoCard>
+      </Grid>
+    );
   } else if (schedule.error) {
-    scheduleBody = <p role="alert">Could not load schedule: {schedule.error}</p>;
+    scheduleSection = (
+      <Grid item xs={12}>
+        <InfoCard title="Schedule">
+          <p role="alert">Could not load schedule: {schedule.error}</p>
+        </InfoCard>
+      </Grid>
+    );
   } else if (!schedule.data) {
-    scheduleBody = <p>Loading schedule…</p>;
+    scheduleSection = (
+      <Grid item xs={12}>
+        <InfoCard title="Schedule">Loading schedule…</InfoCard>
+      </Grid>
+    );
   } else {
-    scheduleBody = <ScheduleView schedule={schedule.data} cluster={cluster} namespace={namespace} />;
+    scheduleSection = <ScheduleCards schedule={schedule.data} cluster={cluster} namespace={namespace} />;
   }
 
   const crumbs = (
     <nav aria-label="Breadcrumb">
-      <a href="/temporal">Temporal</a> › <a href={workflowsLink({ cluster, namespace })}>Workflows</a> › {workflowId}
+      <Link to="/temporal">Temporal</Link> › <Link to={workflowsLink({ cluster, namespace })}>Workflows</Link> › {workflowId}
     </nav>
   );
 
@@ -202,106 +221,65 @@ export function WorkflowPage() {
         {detail.error && <p role="alert">Could not load workflow: {detail.error}</p>}
 
         {d && (
-          <div style={{ marginBottom: 16 }}>
-            <Chips
-              items={[
-                ['Start Time', when(d.startTime)],
-                ['End Time', when(d.closeTime)],
-                ['Duration', formatDuration(d.durationSeconds)],
-                ['Run ID', d.runId],
-                ['Task Queue', d.taskQueue],
-                ['Workflow Type', d.workflowType],
-                ['Scheduled By', d.scheduledBy ? <a href="#schedule">{d.scheduledBy}</a> : '—'],
-                ['History events', String(d.historyLength ?? (history.data ? events.length : '—'))],
-              ]}
-            />
-            {d.uiUrl && (
-              <p style={{ margin: '8px 0 0' }}>
-                <a href={d.uiUrl} target="_blank" rel="noreferrer">
-                  Open in Temporal UI
-                </a>
-              </p>
-            )}
-          </div>
-        )}
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Kpis
+                items={[
+                  ['Start Time', when(d.startTime)],
+                  ['End Time', when(d.closeTime)],
+                  ['Duration', formatDuration(d.durationSeconds)],
+                  ['Run ID', d.runId],
+                  ['Task Queue', d.taskQueue],
+                  ['Workflow Type', d.workflowType],
+                  ['Scheduled By', d.scheduledBy ? <a href="#schedule">{d.scheduledBy}</a> : '—'],
+                  ['History events', String(d.historyLength ?? (history.data ? events.length : '—'))],
+                ]}
+              />
+              {d.uiUrl && (
+                <p style={{ margin: '8px 0 0' }}>
+                  <Link to={d.uiUrl}>Open in Temporal UI</Link>
+                </p>
+              )}
+            </Grid>
 
-        {d && (
-          <section style={card}>
-            <h2 style={{ fontSize: 18, marginTop: 0 }}>Execution</h2>
-            <h3 style={{ fontSize: 14 }}>Workflow diagram</h3>
-            {diagram}
-            {d.failure && <p style={{ color: '#dc2626' }}>Failure: {d.failure}</p>}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, marginTop: 16 }}>
+            <Grid item xs={12} md={6}>
+              <InfoCard title="Workflow diagram">
+                {diagram}
+                {d.failure && <p style={{ color: '#dc2626' }}>Failure: {d.failure}</p>}
+              </InfoCard>
+            </Grid>
+            <Grid item xs={12} md={6}>
               <Payload label="Input" value={d.input} missing={NOT_AVAILABLE} />
-              <Payload label="Result" value={d.result} missing={d.status === 'RUNNING' ? 'Still running' : NOT_AVAILABLE} />
-            </div>
-          </section>
-        )}
+              <Payload label="Output" value={d.result} missing={d.status === 'RUNNING' ? 'Still running' : NOT_AVAILABLE} />
+            </Grid>
 
-        <section style={card}>
-          <h2 style={{ fontSize: 18, marginTop: 0 }}>Event history</h2>
-          {history.error && <p role="alert">Could not load history: {history.error}</p>}
-          {!history.data && !history.error && <p>Loading history…</p>}
-          {history.data?.truncated && (
-            <p>History is truncated: only the first {events.length} events are shown.</p>
-          )}
-          {history.data && events.length > 0 && (
-            <>
-              <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                <button type="button" onClick={() => setOpen(new Set(events.map(e => e.eventId)))}>
-                  Expand all
-                </button>
-                <button type="button" onClick={() => setOpen(new Set())}>
-                  Collapse all
-                </button>
-              </div>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr>
-                    <th style={cell}>Event ID</th>
-                    <th style={cell}>Time</th>
-                    <th style={cell}>Type</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {events.map(e => {
-                    const expanded = open.has(e.eventId);
-                    return (
-                      <Fragment key={e.eventId}>
-                        <tr>
-                          <td style={cell}>{e.eventId}</td>
-                          <td style={cell}>{when(e.eventTime)}</td>
-                          <td style={cell}>
-                            <button type="button" aria-expanded={expanded} onClick={() => toggle(e.eventId)} style={plainButton}>
-                              {expanded ? '▾' : '▸'} {e.eventType}
-                            </button>
-                          </td>
-                        </tr>
-                        {expanded && (
-                          <tr>
-                            <td colSpan={3} style={cell}>
-                              {Object.keys(e.attributes).length > 0 ? (
-                                <JsonViewer value={e.attributes} />
-                              ) : (
-                                <p style={{ margin: 0, opacity: 0.7 }}>{NOT_AVAILABLE}</p>
-                              )}
-                            </td>
-                          </tr>
-                        )}
-                      </Fragment>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </>
-          )}
-        </section>
+            <Grid item xs={12}>
+              {history.error && <p role="alert">Could not load history: {history.error}</p>}
+              {history.data?.truncated && <p>History is truncated: only the first {events.length} events are shown.</p>}
+              <Table<TemporalHistoryEvent>
+                title="Event history"
+                isLoading={!history.data && !history.error}
+                options={{ search: false, padding: 'dense', pageSize: 25, pageSizeOptions: [25, 50, 100] }}
+                columns={eventColumns}
+                data={events}
+                detailPanel={({ rowData }) => (
+                  <div style={{ padding: 16 }}>
+                    {Object.keys(rowData.attributes).length > 0 ? (
+                      <JsonViewer value={rowData.attributes} />
+                    ) : (
+                      <Typography color="textSecondary">{NOT_AVAILABLE}</Typography>
+                    )}
+                  </div>
+                )}
+              />
+            </Grid>
 
-        {d && (
-          <section id="schedule" style={card}>
-            <h2 style={{ fontSize: 18, marginTop: 0 }}>Schedule</h2>
-            {scheduleBody}
-          </section>
+            <Grid item xs={12} id="schedule">
+              <Grid container spacing={3}>
+                {scheduleSection}
+              </Grid>
+            </Grid>
+          </Grid>
         )}
       </Content>
     </Page>

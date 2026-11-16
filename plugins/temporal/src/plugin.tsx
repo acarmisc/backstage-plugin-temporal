@@ -56,6 +56,22 @@ const workflowPage = PageBlueprint.make({
   },
 });
 
+const schedulesPage = PageBlueprint.make({
+  name: 'schedules',
+  params: {
+    path: '/temporal/schedules',
+    loader: () => import('./components/SchedulesPage').then(m => <m.SchedulesPage />),
+  },
+});
+
+const schedulePage = PageBlueprint.make({
+  name: 'schedule',
+  params: {
+    path: '/temporal/schedule',
+    loader: () => import('./components/SchedulePage').then(m => <m.SchedulePage />),
+  },
+});
+
 const entityTab = EntityContentBlueprint.make({
   name: 'stream-tab',
   params: {
@@ -77,5 +93,5 @@ const entityCard = EntityCardBlueprint.make({
 export const temporalPlugin = createFrontendPlugin({
   pluginId: TEMPORAL_PLUGIN_ID,
   routes: { root: rootRouteRef },
-  extensions: [streamsPage, streamPage, definitionPage, workflowsPage, workflowPage, entityTab, entityCard],
+  extensions: [streamsPage, streamPage, definitionPage, workflowsPage, workflowPage, schedulesPage, schedulePage, entityTab, entityCard],
 });

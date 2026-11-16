@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Client, Connection, RawWorkflowExecutionInfo } from '@temporalio/client';
+import { Client, Connection, RawWorkflowExecutionInfo, ScheduleSummary } from '@temporalio/client';
 import { NotFoundError } from '@backstage/errors';
 import {
   ClusterHealth,
@@ -13,6 +13,9 @@ import {
   RunStatus,
   RunSummary,
   ScheduleDetail,
+  ScheduleListItem,
+  ScheduleListResponse,
+  ScheduleSpecView,
   StreamSummary,
   TemporalHistoryEvent,
   TemporalWorkflowSummary,
@@ -38,6 +41,7 @@ import { createRedactor, Redactor } from './redact';
 
 const MAX_STREAM_SCAN = 500; // default scan bound; configured per cluster in TemporalConfig
 const MAX_HISTORY_EVENTS = 2000;
+const MAX_SCHEDULES = 200;
 const SCHEDULE_SUFFIX = /-\d{4}-\d{2}-\d{2}T[\d:.]+Z$/;
 
 /** Statuses the workflow list can filter on. */
@@ -396,20 +400,11 @@ export class TemporalService {
     const cluster = this.assertAllowed(clusterName, namespace);
     const client = await this.client(cluster, namespace);
     const description = await client.schedule.getHandle(scheduleId).describe();
-    const { spec } = description;
     return {
       scheduleId: description.scheduleId,
       paused: description.state.paused,
       note: description.state.note,
-      spec: {
-        // The SDK compiles cron strings into calendars when describing a schedule.
-        calendars: spec.calendars?.map(calendar => ({ ...calendar })),
-        intervals: spec.intervals?.map(interval => ({
-          every: `${interval.every}ms`,
-          offset: interval.offset ? `${interval.offset}ms` : undefined,
-        })),
-        timezone: spec.timezone,
-      },
+      spec: specViewOf(description.spec),
       overlapPolicy: description.policies.overlap,
       workflowType: description.action.workflowType,
       recentActions: description.info.recentActions.map(action => ({
@@ -420,6 +415,61 @@ export class TemporalService {
       })),
       nextActionTimes: description.info.nextActionTimes.map(time => time.toISOString()),
     };
+  }
+
+  /**
+   * Schedules of the namespace with cadence, upcoming times and the newest run each started.
+   * Built from the schedule list only: action arguments are never read.
+   */
+  async listSchedules(clusterName: string, namespace: string): Promise<ScheduleListResponse> {
+    const cluster = this.assertAllowed(clusterName, namespace);
+    return this.cache.getOrLoad(`schedules:${clusterName}:${namespace}`, async () => {
+      const client = await this.client(cluster, namespace);
+      const summaries: ScheduleSummary[] = [];
+      for await (const summary of client.schedule.list()) {
+        summaries.push(summary);
+        if (summaries.length >= MAX_SCHEDULES) break;
+      }
+      // shortcut: last run status comes from one visibility page (newest 100 scheduled runs), so
+      // quiet schedules may show none; upgrade to a per-schedule query if that matters.
+      const lastRuns = new Map<string, TemporalWorkflowSummary>();
+      try {
+        const response = await client.workflowService.listWorkflowExecutions({
+          namespace,
+          pageSize: 100,
+          query: 'TemporalScheduledById != ""',
+        });
+        for (const info of response.executions ?? []) {
+          const run = toWorkflowSummary(namespace, info);
+          if (run.scheduledBy && !lastRuns.has(run.scheduledBy)) lastRuns.set(run.scheduledBy, run);
+        }
+      } catch {
+        // visibility without that search attribute: the cards just omit the last run
+      }
+      return {
+        schedules: summaries
+          .map((summary): ScheduleListItem => {
+            const run = lastRuns.get(summary.scheduleId);
+            const taken = summary.info?.recentActions?.slice(-1)[0]?.takenAt;
+            return {
+              scheduleId: summary.scheduleId,
+              paused: summary.state?.paused ?? false,
+              note: summary.state?.note,
+              workflowType: summary.action?.workflowType,
+              spec: specViewOf(summary.spec),
+              nextActionTimes: (summary.info?.nextActionTimes ?? []).map(t => new Date(t).toISOString()),
+              lastActionAt: taken ? new Date(taken).toISOString() : undefined,
+              lastRun: run && {
+                workflowId: run.workflowId,
+                runId: run.runId,
+                status: run.status,
+                startTime: run.startTime,
+              },
+            };
+          })
+          .sort((a, b) => a.scheduleId.localeCompare(b.scheduleId)),
+      };
+    });
   }
 
   private visibilityQuery(cluster: ClusterConfig): string {
@@ -481,6 +531,18 @@ export function streamNameOf(workflowId: string, prefix: string): string | undef
   const slash = rest.indexOf('/');
   const name = (slash === -1 ? rest : rest.slice(0, slash)).replace(SCHEDULE_SUFFIX, '');
   return name === '' ? undefined : name;
+}
+
+function specViewOf(spec?: ScheduleSummary['spec']): ScheduleSpecView {
+  return {
+    // The SDK compiles cron strings into calendars when describing a schedule.
+    calendars: spec?.calendars?.map(calendar => ({ ...calendar })),
+    intervals: spec?.intervals?.map(interval => ({
+      every: `${interval.every}ms`,
+      offset: interval.offset ? `${interval.offset}ms` : undefined,
+    })),
+    timezone: spec?.timezone,
+  };
 }
 
 function toRunSummary(

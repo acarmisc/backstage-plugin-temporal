@@ -1,0 +1,9 @@
+[
+  {
+    "name": "staging",
+    "namespaces": [
+      "kb"
+    ],
+    "uiBaseUrl": "https://temporal.example.com"
+  }
+]

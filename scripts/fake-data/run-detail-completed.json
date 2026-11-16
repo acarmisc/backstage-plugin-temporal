@@ -1,0 +1,208 @@
+{
+  "workflowId": "stream/crm-jira/20261114T030000",
+  "status": "COMPLETED",
+  "startTime": "2026-11-14T03:00:00Z",
+  "closeTime": "2026-11-14T03:12:45Z",
+  "durationSeconds": 765,
+  "stream": "crm-jira",
+  "graph": {
+    "id": "jira-kb",
+    "name": "jira-kb",
+    "nodes": [
+      {
+        "id": "clone-kb",
+        "label": "clone-kb",
+        "kind": "git",
+        "detail": "clone develop",
+        "params": {
+          "op": "clone",
+          "repo": "https://git.example.com/docs/jira-kb.git",
+          "branch": "develop",
+          "dest": "{workdir}/kb"
+        },
+        "gate": false,
+        "optional": false
+      },
+      {
+        "id": "preflight",
+        "label": "preflight",
+        "kind": "cli",
+        "detail": "jira-kb preflight --config config/pilot.yaml",
+        "params": {},
+        "gate": false,
+        "optional": false
+      },
+      {
+        "id": "capture",
+        "label": "capture",
+        "kind": "cli",
+        "detail": "jira-kb capture --config config/pilot.yaml --output {workdir}/snapshot",
+        "params": {},
+        "gate": false,
+        "optional": false
+      },
+      {
+        "id": "render",
+        "label": "render",
+        "kind": "cli",
+        "detail": "jira-kb render --snapshot {workdir}/snapshot --output {workdir}/rendered",
+        "params": {},
+        "gate": false,
+        "optional": false
+      },
+      {
+        "id": "validate",
+        "label": "validate",
+        "kind": "cli",
+        "detail": "jira-kb validate --input {workdir}/rendered",
+        "params": {},
+        "gate": false,
+        "optional": false
+      },
+      {
+        "id": "export",
+        "label": "export",
+        "kind": "cli",
+        "detail": "jira-kb export --input {workdir}/rendered --repo {workdir}/kb",
+        "params": {},
+        "gate": false,
+        "optional": false
+      },
+      {
+        "id": "push-kb",
+        "label": "push-kb",
+        "kind": "git",
+        "detail": "push develop",
+        "params": {
+          "op": "push",
+          "dest": "{workdir}/kb",
+          "branch": "develop",
+          "paths": [
+            "wiki"
+          ],
+          "message": "chore(kb): refresh"
+        },
+        "gate": false,
+        "optional": false
+      },
+      {
+        "id": "publish-kb",
+        "label": "publish-kb",
+        "kind": "kb_sync",
+        "detail": "example-jira-kb",
+        "params": {
+          "source_dir": "{workdir}/kb/wiki",
+          "prefix": "example-jira-kb",
+          "kb_id": "KBEXAMPLE01",
+          "ds_id": "DSEXAMPLE01",
+          "delete_removed": true
+        },
+        "gate": false,
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "from": "clone-kb",
+        "to": "preflight"
+      },
+      {
+        "from": "preflight",
+        "to": "capture"
+      },
+      {
+        "from": "capture",
+        "to": "render"
+      },
+      {
+        "from": "render",
+        "to": "validate"
+      },
+      {
+        "from": "validate",
+        "to": "export"
+      },
+      {
+        "from": "export",
+        "to": "push-kb"
+      },
+      {
+        "from": "push-kb",
+        "to": "publish-kb"
+      }
+    ],
+    "meta": {
+      "source": "kbflow",
+      "queues": [
+        "kb-KBEXAMPLE01"
+      ]
+    }
+  },
+  "stages": [
+    {
+      "stage": "clone-kb",
+      "state": "ok",
+      "exit": 0,
+      "seconds": 30,
+      "tail": "clone-kb finished successfully",
+      "optional": false
+    },
+    {
+      "stage": "preflight",
+      "state": "ok",
+      "exit": 0,
+      "seconds": 47,
+      "tail": "preflight finished successfully",
+      "optional": false
+    },
+    {
+      "stage": "capture",
+      "state": "ok",
+      "exit": 0,
+      "seconds": 64,
+      "tail": "capture finished successfully",
+      "optional": false
+    },
+    {
+      "stage": "render",
+      "state": "ok",
+      "exit": 0,
+      "seconds": 81,
+      "tail": "render finished successfully",
+      "optional": false
+    },
+    {
+      "stage": "validate",
+      "state": "ok",
+      "exit": 0,
+      "seconds": 98,
+      "tail": "validate finished successfully",
+      "optional": false
+    },
+    {
+      "stage": "export",
+      "state": "ok",
+      "exit": 0,
+      "seconds": 115,
+      "tail": "export finished successfully",
+      "optional": false
+    },
+    {
+      "stage": "push-kb",
+      "state": "ok",
+      "exit": 0,
+      "seconds": 132,
+      "tail": "push-kb finished successfully",
+      "optional": false
+    },
+    {
+      "stage": "publish-kb",
+      "state": "ok",
+      "exit": 0,
+      "seconds": 149,
+      "tail": "publish-kb finished successfully",
+      "optional": false
+    }
+  ],
+  "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/stream/crm-jira/20261114T030000"
+}

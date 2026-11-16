@@ -1,0 +1,3702 @@
+{
+  "9cd36e58-4784-4e74-a28f-c3d3a76ce3fb": {
+    "detail": {
+      "namespace": "kb",
+      "workflowId": "IngestJira-2026-11-16T06:00:00Z",
+      "runId": "9cd36e58-4784-4e74-a28f-c3d3a76ce3fb",
+      "workflowType": "IngestJira",
+      "taskQueue": "kb-queue",
+      "status": "RUNNING",
+      "startTime": "2026-11-16T06:00:00.000Z",
+      "scheduledBy": "jira-sync",
+      "historyLength": 24,
+      "memo": {
+        "owner": "kb-team"
+      },
+      "searchAttributes": {
+        "TemporalScheduledById": "jira-sync"
+      },
+      "input": {
+        "project": "KB",
+        "since": "2026-11-16T04:00:00.000Z"
+      },
+      "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/IngestJira-2026-11-16T06:00:00Z/9cd36e58-4784-4e74-a28f-c3d3a76ce3fb/history"
+    },
+    "history": {
+      "truncated": false,
+      "events": [
+        {
+          "eventId": 1,
+          "eventTime": "2026-11-16T06:00:00.000Z",
+          "eventType": "WorkflowExecutionStarted",
+          "attributes": {
+            "workflowType": {
+              "name": "IngestJira"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "project": "KB",
+                "since": "2026-11-16T04:00:00.000Z"
+              }
+            ],
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 2,
+          "eventTime": "2026-11-16T06:00:01.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 3,
+          "eventTime": "2026-11-16T06:00:02.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 4,
+          "eventTime": "2026-11-16T06:00:03.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "startedEventId": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 5,
+          "eventTime": "2026-11-16T06:00:04.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "activityId": "5",
+            "activityType": {
+              "name": "fetchIssues"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "fetchIssues",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 6,
+          "eventTime": "2026-11-16T06:00:05.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 7,
+          "eventTime": "2026-11-16T06:06:57.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "startedEventId": 6,
+            "result": [
+              {
+                "stage": "fetchIssues",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 412,
+                "tail": "1284 issues fetched from KB"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 8,
+          "eventTime": "2026-11-16T06:06:58.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 9,
+          "eventTime": "2026-11-16T06:06:59.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 10,
+          "eventTime": "2026-11-16T06:07:00.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "startedEventId": 9,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 11,
+          "eventTime": "2026-11-16T06:07:01.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "activityId": "11",
+            "activityType": {
+              "name": "embedChunks"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "embedChunks",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 12,
+          "eventTime": "2026-11-16T06:07:02.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 11,
+            "attempt": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 13,
+          "eventTime": "2026-11-16T06:26:12.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 11,
+            "startedEventId": 12,
+            "result": [
+              {
+                "stage": "embedChunks",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 1150,
+                "tail": "9120 chunks embedded"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 14,
+          "eventTime": "2026-11-16T06:26:13.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 15,
+          "eventTime": "2026-11-16T06:26:14.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 14,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 16,
+          "eventTime": "2026-11-16T06:26:15.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 14,
+            "startedEventId": 15,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 17,
+          "eventTime": "2026-11-16T06:26:16.000Z",
+          "eventType": "TimerStarted",
+          "attributes": {
+            "timerId": "throttle-5m",
+            "startToFireTimeout": "300s",
+            "workflowTaskCompletedEventId": 16
+          }
+        },
+        {
+          "eventId": 18,
+          "eventTime": "2026-11-16T06:31:16.000Z",
+          "eventType": "TimerFired",
+          "attributes": {
+            "timerId": "throttle-5m",
+            "startedEventId": 17
+          }
+        },
+        {
+          "eventId": 19,
+          "eventTime": "2026-11-16T06:31:17.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 20,
+          "eventTime": "2026-11-16T06:31:18.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 19,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 21,
+          "eventTime": "2026-11-16T06:31:19.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 19,
+            "startedEventId": 20,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 22,
+          "eventTime": "2026-11-16T06:31:20.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 21,
+            "activityId": "22",
+            "activityType": {
+              "name": "publishIndex"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "publishIndex",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 23,
+          "eventTime": "2026-11-16T06:31:21.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 22,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 24,
+          "eventTime": "2026-11-16T06:31:22.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 21,
+            "activityId": "24",
+            "activityType": {
+              "name": "notifySlack"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "notifySlack",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        }
+      ]
+    }
+  },
+  "485bc08c-76c6-43ce-a4b4-4639ca6d9b47": {
+    "detail": {
+      "namespace": "kb",
+      "workflowId": "IngestJira-2026-11-16T04:00:00Z",
+      "runId": "485bc08c-76c6-43ce-a4b4-4639ca6d9b47",
+      "workflowType": "IngestJira",
+      "taskQueue": "kb-queue",
+      "status": "COMPLETED",
+      "startTime": "2026-11-16T04:00:00.000Z",
+      "closeTime": "2026-11-16T04:33:40.000Z",
+      "durationSeconds": 2020,
+      "scheduledBy": "jira-sync",
+      "historyLength": 31,
+      "memo": {
+        "owner": "kb-team"
+      },
+      "searchAttributes": {
+        "TemporalScheduledById": "jira-sync"
+      },
+      "input": {
+        "project": "KB",
+        "since": "2026-11-16T01:00:00.000Z"
+      },
+      "result": {
+        "issues": 1284,
+        "chunks": 9120
+      },
+      "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/IngestJira-2026-11-16T04:00:00Z/485bc08c-76c6-43ce-a4b4-4639ca6d9b47/history"
+    },
+    "history": {
+      "truncated": false,
+      "events": [
+        {
+          "eventId": 1,
+          "eventTime": "2026-11-16T04:00:00.000Z",
+          "eventType": "WorkflowExecutionStarted",
+          "attributes": {
+            "workflowType": {
+              "name": "IngestJira"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "project": "KB",
+                "since": "2026-11-16T01:00:00.000Z"
+              }
+            ],
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 2,
+          "eventTime": "2026-11-16T04:00:01.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 3,
+          "eventTime": "2026-11-16T04:00:02.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 4,
+          "eventTime": "2026-11-16T04:00:03.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "startedEventId": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 5,
+          "eventTime": "2026-11-16T04:00:04.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "activityId": "5",
+            "activityType": {
+              "name": "fetchIssues"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "fetchIssues",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 6,
+          "eventTime": "2026-11-16T04:00:05.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 7,
+          "eventTime": "2026-11-16T04:06:57.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "startedEventId": 6,
+            "result": [
+              {
+                "stage": "fetchIssues",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 412,
+                "tail": "1284 issues fetched from KB"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 8,
+          "eventTime": "2026-11-16T04:06:58.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 9,
+          "eventTime": "2026-11-16T04:06:59.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 10,
+          "eventTime": "2026-11-16T04:07:00.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "startedEventId": 9,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 11,
+          "eventTime": "2026-11-16T04:07:01.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "activityId": "11",
+            "activityType": {
+              "name": "embedChunks"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "embedChunks",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 12,
+          "eventTime": "2026-11-16T04:07:02.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 11,
+            "attempt": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 13,
+          "eventTime": "2026-11-16T04:25:22.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 11,
+            "startedEventId": 12,
+            "result": [
+              {
+                "stage": "embedChunks",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 1100,
+                "tail": "9120 chunks embedded"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 14,
+          "eventTime": "2026-11-16T04:25:23.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 15,
+          "eventTime": "2026-11-16T04:25:24.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 14,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 16,
+          "eventTime": "2026-11-16T04:25:25.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 14,
+            "startedEventId": 15,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 17,
+          "eventTime": "2026-11-16T04:25:26.000Z",
+          "eventType": "TimerStarted",
+          "attributes": {
+            "timerId": "throttle-5m",
+            "startToFireTimeout": "300s",
+            "workflowTaskCompletedEventId": 16
+          }
+        },
+        {
+          "eventId": 18,
+          "eventTime": "2026-11-16T04:30:26.000Z",
+          "eventType": "TimerFired",
+          "attributes": {
+            "timerId": "throttle-5m",
+            "startedEventId": 17
+          }
+        },
+        {
+          "eventId": 19,
+          "eventTime": "2026-11-16T04:30:27.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 20,
+          "eventTime": "2026-11-16T04:30:28.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 19,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 21,
+          "eventTime": "2026-11-16T04:30:29.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 19,
+            "startedEventId": 20,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 22,
+          "eventTime": "2026-11-16T04:30:30.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 21,
+            "activityId": "22",
+            "activityType": {
+              "name": "publishIndex"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "publishIndex",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 23,
+          "eventTime": "2026-11-16T04:30:31.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 22,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 24,
+          "eventTime": "2026-11-16T04:33:31.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 22,
+            "startedEventId": 23,
+            "result": [
+              {
+                "stage": "publishIndex",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 180,
+                "tail": "index kb-jira swapped"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 25,
+          "eventTime": "2026-11-16T04:33:32.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 26,
+          "eventTime": "2026-11-16T04:33:33.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 25,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 27,
+          "eventTime": "2026-11-16T04:33:34.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 25,
+            "startedEventId": 26,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 28,
+          "eventTime": "2026-11-16T04:33:35.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 27,
+            "activityId": "28",
+            "activityType": {
+              "name": "notifySlack"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "notifySlack",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 29,
+          "eventTime": "2026-11-16T04:33:36.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 28,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 30,
+          "eventTime": "2026-11-16T04:33:39.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 28,
+            "startedEventId": 29,
+            "result": [
+              {
+                "stage": "notifySlack",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 3,
+                "tail": "posted to #kb-ingest"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 31,
+          "eventTime": "2026-11-16T04:33:40.000Z",
+          "eventType": "WorkflowExecutionCompleted",
+          "attributes": {
+            "workflowTaskCompletedEventId": 27,
+            "result": [
+              {
+                "issues": 1284,
+                "chunks": 9120
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "ecacad87-71dd-4c6e-a85c-32673b7a08a8": {
+    "detail": {
+      "namespace": "kb",
+      "workflowId": "IngestJira-2026-11-16T02:00:00Z",
+      "runId": "ecacad87-71dd-4c6e-a85c-32673b7a08a8",
+      "workflowType": "IngestJira",
+      "taskQueue": "kb-queue",
+      "status": "COMPLETED",
+      "startTime": "2026-11-16T02:00:00.000Z",
+      "closeTime": "2026-11-16T02:14:47.000Z",
+      "durationSeconds": 887,
+      "scheduledBy": "jira-sync",
+      "historyLength": 25,
+      "memo": {
+        "owner": "kb-team"
+      },
+      "searchAttributes": {
+        "TemporalScheduledById": "jira-sync"
+      },
+      "input": {
+        "project": "KB",
+        "since": "2026-11-15T23:00:00.000Z"
+      },
+      "result": {
+        "issues": 41,
+        "chunks": 260
+      },
+      "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/IngestJira-2026-11-16T02:00:00Z/ecacad87-71dd-4c6e-a85c-32673b7a08a8/history"
+    },
+    "history": {
+      "truncated": false,
+      "events": [
+        {
+          "eventId": 1,
+          "eventTime": "2026-11-16T02:00:00.000Z",
+          "eventType": "WorkflowExecutionStarted",
+          "attributes": {
+            "workflowType": {
+              "name": "IngestJira"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "project": "KB",
+                "since": "2026-11-15T23:00:00.000Z"
+              }
+            ],
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 2,
+          "eventTime": "2026-11-16T02:00:01.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 3,
+          "eventTime": "2026-11-16T02:00:02.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 4,
+          "eventTime": "2026-11-16T02:00:03.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "startedEventId": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 5,
+          "eventTime": "2026-11-16T02:00:04.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "activityId": "5",
+            "activityType": {
+              "name": "fetchIssues"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "fetchIssues",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 6,
+          "eventTime": "2026-11-16T02:00:05.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 7,
+          "eventTime": "2026-11-16T02:06:57.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "startedEventId": 6,
+            "result": [
+              {
+                "stage": "fetchIssues",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 412,
+                "tail": "1284 issues fetched from KB"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 8,
+          "eventTime": "2026-11-16T02:06:58.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 9,
+          "eventTime": "2026-11-16T02:06:59.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 10,
+          "eventTime": "2026-11-16T02:07:00.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "startedEventId": 9,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 11,
+          "eventTime": "2026-11-16T02:07:01.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "activityId": "11",
+            "activityType": {
+              "name": "embedChunks"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "embedChunks",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 12,
+          "eventTime": "2026-11-16T02:07:02.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 11,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 13,
+          "eventTime": "2026-11-16T02:08:37.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 11,
+            "startedEventId": 12,
+            "result": [
+              {
+                "stage": "embedChunks",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 95,
+                "tail": "9120 chunks embedded"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 14,
+          "eventTime": "2026-11-16T02:08:38.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 15,
+          "eventTime": "2026-11-16T02:08:39.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 14,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 16,
+          "eventTime": "2026-11-16T02:08:40.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 14,
+            "startedEventId": 15,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 17,
+          "eventTime": "2026-11-16T02:08:41.000Z",
+          "eventType": "TimerStarted",
+          "attributes": {
+            "timerId": "throttle-5m",
+            "startToFireTimeout": "300s",
+            "workflowTaskCompletedEventId": 16
+          }
+        },
+        {
+          "eventId": 18,
+          "eventTime": "2026-11-16T02:13:41.000Z",
+          "eventType": "TimerFired",
+          "attributes": {
+            "timerId": "throttle-5m",
+            "startedEventId": 17
+          }
+        },
+        {
+          "eventId": 19,
+          "eventTime": "2026-11-16T02:13:42.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 20,
+          "eventTime": "2026-11-16T02:13:43.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 19,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 21,
+          "eventTime": "2026-11-16T02:13:44.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 19,
+            "startedEventId": 20,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 22,
+          "eventTime": "2026-11-16T02:13:45.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 21,
+            "activityId": "22",
+            "activityType": {
+              "name": "publishIndex"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "publishIndex",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 23,
+          "eventTime": "2026-11-16T02:13:46.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 22,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 24,
+          "eventTime": "2026-11-16T02:14:46.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 22,
+            "startedEventId": 23,
+            "result": [
+              {
+                "stage": "publishIndex",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 60,
+                "tail": "index kb-jira swapped"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 25,
+          "eventTime": "2026-11-16T02:14:47.000Z",
+          "eventType": "WorkflowExecutionCompleted",
+          "attributes": {
+            "workflowTaskCompletedEventId": 21,
+            "result": [
+              {
+                "issues": 41,
+                "chunks": 260
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "e7ac744f-a512-40ff-ad4b-4b687d4605f9": {
+    "detail": {
+      "namespace": "kb",
+      "workflowId": "IngestJira-2026-11-16T00:00:00Z",
+      "runId": "e7ac744f-a512-40ff-ad4b-4b687d4605f9",
+      "workflowType": "IngestJira",
+      "taskQueue": "kb-queue",
+      "status": "FAILED",
+      "startTime": "2026-11-16T00:00:00.000Z",
+      "closeTime": "2026-11-16T00:10:51.000Z",
+      "durationSeconds": 651,
+      "scheduledBy": "jira-sync",
+      "historyLength": 14,
+      "memo": {
+        "owner": "kb-team"
+      },
+      "searchAttributes": {
+        "TemporalScheduledById": "jira-sync"
+      },
+      "input": {
+        "project": "KB",
+        "since": "2026-11-15T21:00:00.000Z"
+      },
+      "failure": "embedChunks failed: 429 Too Many Requests from the embeddings API (retry budget exhausted after 5 attempts)",
+      "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/IngestJira-2026-11-16T00:00:00Z/e7ac744f-a512-40ff-ad4b-4b687d4605f9/history"
+    },
+    "history": {
+      "truncated": false,
+      "events": [
+        {
+          "eventId": 1,
+          "eventTime": "2026-11-16T00:00:00.000Z",
+          "eventType": "WorkflowExecutionStarted",
+          "attributes": {
+            "workflowType": {
+              "name": "IngestJira"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "project": "KB",
+                "since": "2026-11-15T21:00:00.000Z"
+              }
+            ],
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 2,
+          "eventTime": "2026-11-16T00:00:01.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 3,
+          "eventTime": "2026-11-16T00:00:02.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 4,
+          "eventTime": "2026-11-16T00:00:03.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "startedEventId": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 5,
+          "eventTime": "2026-11-16T00:00:04.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "activityId": "5",
+            "activityType": {
+              "name": "fetchIssues"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "fetchIssues",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 6,
+          "eventTime": "2026-11-16T00:00:05.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 7,
+          "eventTime": "2026-11-16T00:06:25.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "startedEventId": 6,
+            "result": [
+              {
+                "stage": "fetchIssues",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 380,
+                "tail": "611 issues fetched from KB"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 8,
+          "eventTime": "2026-11-16T00:06:26.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 9,
+          "eventTime": "2026-11-16T00:06:27.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 10,
+          "eventTime": "2026-11-16T00:06:28.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "startedEventId": 9,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 11,
+          "eventTime": "2026-11-16T00:06:29.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "activityId": "11",
+            "activityType": {
+              "name": "embedChunks"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "embedChunks",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 12,
+          "eventTime": "2026-11-16T00:06:30.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 11,
+            "attempt": 5,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 13,
+          "eventTime": "2026-11-16T00:10:50.000Z",
+          "eventType": "ActivityTaskFailed",
+          "attributes": {
+            "scheduledEventId": 11,
+            "startedEventId": 12,
+            "retryState": "RETRY_STATE_MAXIMUM_ATTEMPTS_REACHED",
+            "failure": {
+              "message": "429 Too Many Requests from the embeddings API (retry budget exhausted after 5 attempts)",
+              "source": "Worker",
+              "applicationFailureInfo": {
+                "type": "HttpError",
+                "nonRetryable": false
+              }
+            }
+          }
+        },
+        {
+          "eventId": 14,
+          "eventTime": "2026-11-16T00:10:51.000Z",
+          "eventType": "WorkflowExecutionFailed",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "failure": {
+              "message": "embedChunks failed: 429 Too Many Requests from the embeddings API (retry budget exhausted after 5 attempts)",
+              "source": "Worker"
+            },
+            "retryState": "RETRY_STATE_MAXIMUM_ATTEMPTS_REACHED"
+          }
+        }
+      ]
+    }
+  },
+  "0913528c-4e78-4448-aca2-440e89f754e5": {
+    "detail": {
+      "namespace": "kb",
+      "workflowId": "IngestConfluence-2026-11-16T06:15:00Z",
+      "runId": "0913528c-4e78-4448-aca2-440e89f754e5",
+      "workflowType": "IngestConfluence",
+      "taskQueue": "kb-queue",
+      "status": "COMPLETED",
+      "startTime": "2026-11-16T06:15:00.000Z",
+      "closeTime": "2026-11-16T06:18:21.000Z",
+      "durationSeconds": 201,
+      "scheduledBy": "confluence-hourly",
+      "historyLength": 14,
+      "memo": {
+        "owner": "kb-team"
+      },
+      "searchAttributes": {
+        "TemporalScheduledById": "confluence-hourly"
+      },
+      "input": {
+        "space": "ENG"
+      },
+      "result": {
+        "pages": 412
+      },
+      "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/IngestConfluence-2026-11-16T06:15:00Z/0913528c-4e78-4448-aca2-440e89f754e5/history"
+    },
+    "history": {
+      "truncated": false,
+      "events": [
+        {
+          "eventId": 1,
+          "eventTime": "2026-11-16T06:15:00.000Z",
+          "eventType": "WorkflowExecutionStarted",
+          "attributes": {
+            "workflowType": {
+              "name": "IngestConfluence"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "space": "ENG"
+              }
+            ],
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 2,
+          "eventTime": "2026-11-16T06:15:01.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 3,
+          "eventTime": "2026-11-16T06:15:02.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 4,
+          "eventTime": "2026-11-16T06:15:03.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "startedEventId": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 5,
+          "eventTime": "2026-11-16T06:15:04.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "activityId": "5",
+            "activityType": {
+              "name": "crawlSpaces"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "crawlSpaces",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 6,
+          "eventTime": "2026-11-16T06:15:05.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 7,
+          "eventTime": "2026-11-16T06:17:35.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "startedEventId": 6,
+            "result": [
+              {
+                "stage": "crawlSpaces",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 150,
+                "tail": "412 pages crawled"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 8,
+          "eventTime": "2026-11-16T06:17:36.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 9,
+          "eventTime": "2026-11-16T06:17:37.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 10,
+          "eventTime": "2026-11-16T06:17:38.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "startedEventId": 9,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 11,
+          "eventTime": "2026-11-16T06:17:39.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "activityId": "11",
+            "activityType": {
+              "name": "indexPages"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "indexPages",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 12,
+          "eventTime": "2026-11-16T06:17:40.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 11,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 13,
+          "eventTime": "2026-11-16T06:18:20.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 11,
+            "startedEventId": 12,
+            "result": [
+              {
+                "stage": "indexPages",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 40,
+                "tail": "indexed 412 pages"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 14,
+          "eventTime": "2026-11-16T06:18:21.000Z",
+          "eventType": "WorkflowExecutionCompleted",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "result": [
+              {
+                "pages": 412
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "06b690f4-932e-4e17-a239-49deb7774b76": {
+    "detail": {
+      "namespace": "kb",
+      "workflowId": "IngestConfluence-2026-11-16T05:15:00Z",
+      "runId": "06b690f4-932e-4e17-a239-49deb7774b76",
+      "workflowType": "IngestConfluence",
+      "taskQueue": "kb-queue",
+      "status": "COMPLETED",
+      "startTime": "2026-11-16T05:15:00.000Z",
+      "closeTime": "2026-11-16T05:17:51.000Z",
+      "durationSeconds": 171,
+      "scheduledBy": "confluence-hourly",
+      "historyLength": 14,
+      "memo": {
+        "owner": "kb-team"
+      },
+      "searchAttributes": {
+        "TemporalScheduledById": "confluence-hourly"
+      },
+      "input": {
+        "space": "ENG"
+      },
+      "result": {
+        "pages": 58
+      },
+      "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/IngestConfluence-2026-11-16T05:15:00Z/06b690f4-932e-4e17-a239-49deb7774b76/history"
+    },
+    "history": {
+      "truncated": false,
+      "events": [
+        {
+          "eventId": 1,
+          "eventTime": "2026-11-16T05:15:00.000Z",
+          "eventType": "WorkflowExecutionStarted",
+          "attributes": {
+            "workflowType": {
+              "name": "IngestConfluence"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "space": "ENG"
+              }
+            ],
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 2,
+          "eventTime": "2026-11-16T05:15:01.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 3,
+          "eventTime": "2026-11-16T05:15:02.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 4,
+          "eventTime": "2026-11-16T05:15:03.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "startedEventId": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 5,
+          "eventTime": "2026-11-16T05:15:04.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "activityId": "5",
+            "activityType": {
+              "name": "crawlSpaces"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "crawlSpaces",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 6,
+          "eventTime": "2026-11-16T05:15:05.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 7,
+          "eventTime": "2026-11-16T05:17:15.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "startedEventId": 6,
+            "result": [
+              {
+                "stage": "crawlSpaces",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 130,
+                "tail": "58 pages crawled"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 8,
+          "eventTime": "2026-11-16T05:17:16.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 9,
+          "eventTime": "2026-11-16T05:17:17.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 10,
+          "eventTime": "2026-11-16T05:17:18.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "startedEventId": 9,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 11,
+          "eventTime": "2026-11-16T05:17:19.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "activityId": "11",
+            "activityType": {
+              "name": "indexPages"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "indexPages",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 12,
+          "eventTime": "2026-11-16T05:17:20.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 11,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 13,
+          "eventTime": "2026-11-16T05:17:50.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 11,
+            "startedEventId": 12,
+            "result": [
+              {
+                "stage": "indexPages",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 30,
+                "tail": "indexed 58 pages"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 14,
+          "eventTime": "2026-11-16T05:17:51.000Z",
+          "eventType": "WorkflowExecutionCompleted",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "result": [
+              {
+                "pages": 58
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "7b624bf8-8d1e-4316-add2-f73a95b46b69": {
+    "detail": {
+      "namespace": "kb",
+      "workflowId": "IngestConfluence-2026-11-16T04:15:00Z",
+      "runId": "7b624bf8-8d1e-4316-add2-f73a95b46b69",
+      "workflowType": "IngestConfluence",
+      "taskQueue": "kb-queue",
+      "status": "CANCELED",
+      "startTime": "2026-11-16T04:15:00.000Z",
+      "closeTime": "2026-11-16T04:15:47.000Z",
+      "durationSeconds": 47,
+      "scheduledBy": "confluence-hourly",
+      "historyLength": 9,
+      "memo": {
+        "owner": "kb-team"
+      },
+      "searchAttributes": {
+        "TemporalScheduledById": "confluence-hourly"
+      },
+      "input": {
+        "space": "ARCH"
+      },
+      "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/IngestConfluence-2026-11-16T04:15:00Z/7b624bf8-8d1e-4316-add2-f73a95b46b69/history"
+    },
+    "history": {
+      "truncated": false,
+      "events": [
+        {
+          "eventId": 1,
+          "eventTime": "2026-11-16T04:15:00.000Z",
+          "eventType": "WorkflowExecutionStarted",
+          "attributes": {
+            "workflowType": {
+              "name": "IngestConfluence"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "space": "ARCH"
+              }
+            ],
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 2,
+          "eventTime": "2026-11-16T04:15:01.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 3,
+          "eventTime": "2026-11-16T04:15:02.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 4,
+          "eventTime": "2026-11-16T04:15:03.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "startedEventId": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 5,
+          "eventTime": "2026-11-16T04:15:04.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "activityId": "5",
+            "activityType": {
+              "name": "crawlSpaces"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "crawlSpaces",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 6,
+          "eventTime": "2026-11-16T04:15:05.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 7,
+          "eventTime": "2026-11-16T04:15:45.000Z",
+          "eventType": "ActivityTaskCancelRequested",
+          "attributes": {
+            "scheduledEventId": 5,
+            "workflowTaskCompletedEventId": 4
+          }
+        },
+        {
+          "eventId": 8,
+          "eventTime": "2026-11-16T04:15:46.000Z",
+          "eventType": "ActivityTaskCanceled",
+          "attributes": {
+            "scheduledEventId": 5,
+            "startedEventId": 6,
+            "latestCancelRequestedEventId": 7,
+            "details": []
+          }
+        },
+        {
+          "eventId": 9,
+          "eventTime": "2026-11-16T04:15:47.000Z",
+          "eventType": "WorkflowExecutionCanceled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "details": []
+          }
+        }
+      ]
+    }
+  },
+  "a591ff4c-a621-4061-a2de-b849a8743300": {
+    "detail": {
+      "namespace": "kb",
+      "workflowId": "IngestConfluence-2026-11-15T16:00:00Z",
+      "runId": "a591ff4c-a621-4061-a2de-b849a8743300",
+      "workflowType": "IngestConfluence",
+      "taskQueue": "kb-queue",
+      "status": "TIMED_OUT",
+      "startTime": "2026-11-15T16:00:00.000Z",
+      "closeTime": "2026-11-15T16:10:21.000Z",
+      "durationSeconds": 621,
+      "historyLength": 14,
+      "memo": {
+        "owner": "kb-team"
+      },
+      "searchAttributes": {},
+      "input": {
+        "space": "ARCH"
+      },
+      "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/IngestConfluence-2026-11-15T16:00:00Z/a591ff4c-a621-4061-a2de-b849a8743300/history"
+    },
+    "history": {
+      "truncated": false,
+      "events": [
+        {
+          "eventId": 1,
+          "eventTime": "2026-11-15T16:00:00.000Z",
+          "eventType": "WorkflowExecutionStarted",
+          "attributes": {
+            "workflowType": {
+              "name": "IngestConfluence"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "space": "ARCH"
+              }
+            ],
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 2,
+          "eventTime": "2026-11-15T16:00:01.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 3,
+          "eventTime": "2026-11-15T16:00:02.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 4,
+          "eventTime": "2026-11-15T16:00:03.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "startedEventId": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 5,
+          "eventTime": "2026-11-15T16:00:04.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "activityId": "5",
+            "activityType": {
+              "name": "loadSpaces"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "loadSpaces",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 6,
+          "eventTime": "2026-11-15T16:00:05.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 7,
+          "eventTime": "2026-11-15T16:00:15.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "startedEventId": 6,
+            "result": [
+              {
+                "stage": "loadSpaces",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 10,
+                "tail": "3 spaces"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 8,
+          "eventTime": "2026-11-15T16:00:16.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 9,
+          "eventTime": "2026-11-15T16:00:17.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 10,
+          "eventTime": "2026-11-15T16:00:18.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "startedEventId": 9,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 11,
+          "eventTime": "2026-11-15T16:00:19.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "activityId": "11",
+            "activityType": {
+              "name": "crawlSpaces"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "crawlSpaces",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 12,
+          "eventTime": "2026-11-15T16:00:20.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 11,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 13,
+          "eventTime": "2026-11-15T16:10:20.000Z",
+          "eventType": "ActivityTaskTimedOut",
+          "attributes": {
+            "scheduledEventId": 11,
+            "startedEventId": 12,
+            "retryState": "RETRY_STATE_TIMEOUT",
+            "failure": {
+              "message": "activity StartToClose timeout",
+              "source": "Server",
+              "timeoutFailureInfo": {
+                "timeoutType": "TIMEOUT_TYPE_START_TO_CLOSE"
+              }
+            }
+          }
+        },
+        {
+          "eventId": 14,
+          "eventTime": "2026-11-15T16:10:21.000Z",
+          "eventType": "WorkflowExecutionTimedOut",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "retryState": "RETRY_STATE_TIMEOUT"
+          }
+        }
+      ]
+    }
+  },
+  "8115b66e-101d-4ab2-a174-6a50854f74d5": {
+    "detail": {
+      "namespace": "kb",
+      "workflowId": "ReindexKb-2026-11-15T00:00:00Z",
+      "runId": "8115b66e-101d-4ab2-a174-6a50854f74d5",
+      "workflowType": "ReindexKb",
+      "taskQueue": "kb-queue",
+      "status": "COMPLETED",
+      "startTime": "2026-11-15T00:00:00.000Z",
+      "closeTime": "2026-11-15T00:16:20.000Z",
+      "durationSeconds": 980,
+      "scheduledBy": "reindex-weekly",
+      "historyLength": 19,
+      "memo": {
+        "owner": "kb-team"
+      },
+      "searchAttributes": {
+        "TemporalScheduledById": "reindex-weekly"
+      },
+      "input": {
+        "index": "kb-jira",
+        "mode": "full"
+      },
+      "result": {
+        "indexed": 9120
+      },
+      "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/ReindexKb-2026-11-15T00:00:00Z/8115b66e-101d-4ab2-a174-6a50854f74d5/history"
+    },
+    "history": {
+      "truncated": false,
+      "events": [
+        {
+          "eventId": 1,
+          "eventTime": "2026-11-15T00:00:00.000Z",
+          "eventType": "WorkflowExecutionStarted",
+          "attributes": {
+            "workflowType": {
+              "name": "ReindexKb"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "index": "kb-jira",
+                "mode": "full"
+              }
+            ],
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 2,
+          "eventTime": "2026-11-15T00:00:01.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 3,
+          "eventTime": "2026-11-15T00:00:02.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 4,
+          "eventTime": "2026-11-15T00:00:03.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "startedEventId": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 5,
+          "eventTime": "2026-11-15T00:00:04.000Z",
+          "eventType": "StartChildWorkflowExecutionInitiated",
+          "attributes": {
+            "workflowId": "ShardReindex-shard-0",
+            "workflowType": {
+              "name": "ShardReindex"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "workflowTaskCompletedEventId": 4
+          }
+        },
+        {
+          "eventId": 6,
+          "eventTime": "2026-11-15T00:00:05.000Z",
+          "eventType": "ChildWorkflowExecutionStarted",
+          "attributes": {
+            "initiatedEventId": 5,
+            "workflowType": {
+              "name": "ShardReindex"
+            }
+          }
+        },
+        {
+          "eventId": 7,
+          "eventTime": "2026-11-15T00:15:05.000Z",
+          "eventType": "ChildWorkflowExecutionCompleted",
+          "attributes": {
+            "initiatedEventId": 5,
+            "startedEventId": 6,
+            "result": [
+              {
+                "shard": 0,
+                "documents": 9120
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 8,
+          "eventTime": "2026-11-15T00:15:06.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 9,
+          "eventTime": "2026-11-15T00:15:07.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 10,
+          "eventTime": "2026-11-15T00:15:08.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "startedEventId": 9,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 11,
+          "eventTime": "2026-11-15T00:15:09.000Z",
+          "eventType": "TimerStarted",
+          "attributes": {
+            "timerId": "verify-delay",
+            "startToFireTimeout": "60s",
+            "workflowTaskCompletedEventId": 10
+          }
+        },
+        {
+          "eventId": 12,
+          "eventTime": "2026-11-15T00:16:09.000Z",
+          "eventType": "TimerFired",
+          "attributes": {
+            "timerId": "verify-delay",
+            "startedEventId": 11
+          }
+        },
+        {
+          "eventId": 13,
+          "eventTime": "2026-11-15T00:16:10.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 14,
+          "eventTime": "2026-11-15T00:16:11.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 13,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 15,
+          "eventTime": "2026-11-15T00:16:12.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 13,
+            "startedEventId": 14,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 16,
+          "eventTime": "2026-11-15T00:16:13.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 15,
+            "activityId": "16",
+            "activityType": {
+              "name": "swapIndexAlias"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "swapIndexAlias",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 17,
+          "eventTime": "2026-11-15T00:16:14.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 16,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 18,
+          "eventTime": "2026-11-15T00:16:19.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 16,
+            "startedEventId": 17,
+            "result": [
+              {
+                "stage": "swapIndexAlias",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 5,
+                "tail": "alias kb-jira -> kb-jira-v7"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 19,
+          "eventTime": "2026-11-15T00:16:20.000Z",
+          "eventType": "WorkflowExecutionCompleted",
+          "attributes": {
+            "workflowTaskCompletedEventId": 15,
+            "result": [
+              {
+                "indexed": 9120
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "314a5de1-cd2e-441b-ad5e-e40c866c77ab": {
+    "detail": {
+      "namespace": "kb",
+      "workflowId": "ReindexKb-2026-11-14T07:00:00Z",
+      "runId": "314a5de1-cd2e-441b-ad5e-e40c866c77ab",
+      "workflowType": "ReindexKb",
+      "taskQueue": "kb-queue",
+      "status": "TERMINATED",
+      "startTime": "2026-11-14T07:00:00.000Z",
+      "closeTime": "2026-11-14T07:10:10.000Z",
+      "durationSeconds": 610,
+      "historyLength": 12,
+      "memo": {
+        "owner": "kb-team"
+      },
+      "searchAttributes": {},
+      "input": {
+        "index": "kb-wiki",
+        "mode": "full"
+      },
+      "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/ReindexKb-2026-11-14T07:00:00Z/314a5de1-cd2e-441b-ad5e-e40c866c77ab/history"
+    },
+    "history": {
+      "truncated": false,
+      "events": [
+        {
+          "eventId": 1,
+          "eventTime": "2026-11-14T07:00:00.000Z",
+          "eventType": "WorkflowExecutionStarted",
+          "attributes": {
+            "workflowType": {
+              "name": "ReindexKb"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "index": "kb-wiki",
+                "mode": "full"
+              }
+            ],
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 2,
+          "eventTime": "2026-11-14T07:00:01.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 3,
+          "eventTime": "2026-11-14T07:00:02.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 4,
+          "eventTime": "2026-11-14T07:00:03.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "startedEventId": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 5,
+          "eventTime": "2026-11-14T07:00:04.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "activityId": "5",
+            "activityType": {
+              "name": "buildIndex"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "buildIndex",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 6,
+          "eventTime": "2026-11-14T07:00:05.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 7,
+          "eventTime": "2026-11-14T07:10:05.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "startedEventId": 6,
+            "result": [
+              {
+                "stage": "buildIndex",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 600,
+                "tail": "built kb-wiki-v8"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 8,
+          "eventTime": "2026-11-14T07:10:06.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 9,
+          "eventTime": "2026-11-14T07:10:07.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 10,
+          "eventTime": "2026-11-14T07:10:08.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "startedEventId": 9,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 11,
+          "eventTime": "2026-11-14T07:10:09.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "activityId": "11",
+            "activityType": {
+              "name": "swapIndexAlias"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "swapIndexAlias",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 12,
+          "eventTime": "2026-11-14T07:10:10.000Z",
+          "eventType": "WorkflowExecutionTerminated",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "reason": "Superseded by the full reindex on Sunday",
+            "identity": "kb-ops-cli"
+          }
+        }
+      ]
+    }
+  },
+  "cf7de350-bb6c-4308-a72c-e8f84442b165": {
+    "detail": {
+      "namespace": "kb",
+      "workflowId": "CrmSync-2026-11-15T07:00:00Z",
+      "runId": "cf7de350-bb6c-4308-a72c-e8f84442b165",
+      "workflowType": "CrmSync",
+      "taskQueue": "kb-queue",
+      "status": "COMPLETED",
+      "startTime": "2026-11-15T07:00:00.000Z",
+      "closeTime": "2026-11-15T07:08:51.000Z",
+      "durationSeconds": 531,
+      "historyLength": 14,
+      "memo": {
+        "owner": "kb-team"
+      },
+      "searchAttributes": {},
+      "input": {
+        "account": "all"
+      },
+      "result": {
+        "contacts": 3120
+      },
+      "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/CrmSync-2026-11-15T07:00:00Z/cf7de350-bb6c-4308-a72c-e8f84442b165/history"
+    },
+    "history": {
+      "truncated": false,
+      "events": [
+        {
+          "eventId": 1,
+          "eventTime": "2026-11-15T07:00:00.000Z",
+          "eventType": "WorkflowExecutionStarted",
+          "attributes": {
+            "workflowType": {
+              "name": "CrmSync"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "account": "all"
+              }
+            ],
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 2,
+          "eventTime": "2026-11-15T07:00:01.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 3,
+          "eventTime": "2026-11-15T07:00:02.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 4,
+          "eventTime": "2026-11-15T07:00:03.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "startedEventId": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 5,
+          "eventTime": "2026-11-15T07:00:04.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "activityId": "5",
+            "activityType": {
+              "name": "pullCrm"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "pullCrm",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 6,
+          "eventTime": "2026-11-15T07:00:05.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "attempt": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 7,
+          "eventTime": "2026-11-15T07:05:15.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "startedEventId": 6,
+            "result": [
+              {
+                "stage": "pullCrm",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 310,
+                "tail": "3120 contacts"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 8,
+          "eventTime": "2026-11-15T07:05:16.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 9,
+          "eventTime": "2026-11-15T07:05:17.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 10,
+          "eventTime": "2026-11-15T07:05:18.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "startedEventId": 9,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 11,
+          "eventTime": "2026-11-15T07:05:19.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "activityId": "11",
+            "activityType": {
+              "name": "pushCrm"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "pushCrm",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 12,
+          "eventTime": "2026-11-15T07:05:20.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 11,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 13,
+          "eventTime": "2026-11-15T07:08:50.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 11,
+            "startedEventId": 12,
+            "result": [
+              {
+                "stage": "pushCrm",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 210,
+                "tail": "pushed 3120 contacts"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 14,
+          "eventTime": "2026-11-15T07:08:51.000Z",
+          "eventType": "WorkflowExecutionCompleted",
+          "attributes": {
+            "workflowTaskCompletedEventId": 10,
+            "result": [
+              {
+                "contacts": 3120
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "409b54b2-9db5-4819-a5c9-c003ff662001": {
+    "detail": {
+      "namespace": "kb",
+      "workflowId": "CrmSync-2026-11-16T05:10:00Z",
+      "runId": "409b54b2-9db5-4819-a5c9-c003ff662001",
+      "workflowType": "CrmSync",
+      "taskQueue": "kb-queue",
+      "status": "FAILED",
+      "startTime": "2026-11-16T05:10:00.000Z",
+      "closeTime": "2026-11-16T05:11:41.000Z",
+      "durationSeconds": 101,
+      "historyLength": 8,
+      "memo": {
+        "owner": "kb-team"
+      },
+      "searchAttributes": {},
+      "input": {
+        "account": "emea"
+      },
+      "failure": "401 Unauthorized: CRM API token expired",
+      "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/CrmSync-2026-11-16T05:10:00Z/409b54b2-9db5-4819-a5c9-c003ff662001/history"
+    },
+    "history": {
+      "truncated": false,
+      "events": [
+        {
+          "eventId": 1,
+          "eventTime": "2026-11-16T05:10:00.000Z",
+          "eventType": "WorkflowExecutionStarted",
+          "attributes": {
+            "workflowType": {
+              "name": "CrmSync"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "account": "emea"
+              }
+            ],
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 2,
+          "eventTime": "2026-11-16T05:10:01.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 3,
+          "eventTime": "2026-11-16T05:10:02.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 4,
+          "eventTime": "2026-11-16T05:10:03.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "startedEventId": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 5,
+          "eventTime": "2026-11-16T05:10:04.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "activityId": "5",
+            "activityType": {
+              "name": "pullCrm"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "pullCrm",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 6,
+          "eventTime": "2026-11-16T05:10:05.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 7,
+          "eventTime": "2026-11-16T05:11:40.000Z",
+          "eventType": "ActivityTaskFailed",
+          "attributes": {
+            "scheduledEventId": 5,
+            "startedEventId": 6,
+            "retryState": "RETRY_STATE_NON_RETRYABLE_FAILURE",
+            "failure": {
+              "message": "401 Unauthorized: CRM API token expired",
+              "source": "Worker",
+              "applicationFailureInfo": {
+                "type": "HttpError",
+                "nonRetryable": true
+              }
+            }
+          }
+        },
+        {
+          "eventId": 8,
+          "eventTime": "2026-11-16T05:11:41.000Z",
+          "eventType": "WorkflowExecutionFailed",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "failure": {
+              "message": "401 Unauthorized: CRM API token expired",
+              "source": "Worker"
+            },
+            "retryState": "RETRY_STATE_NON_RETRYABLE_FAILURE"
+          }
+        }
+      ]
+    }
+  },
+  "8f3ed40f-8fde-41e1-a710-1d9cd1339fa5": {
+    "detail": {
+      "namespace": "kb",
+      "workflowId": "CrmSync-2026-11-16T06:30:00Z",
+      "runId": "8f3ed40f-8fde-41e1-a710-1d9cd1339fa5",
+      "workflowType": "CrmSync",
+      "taskQueue": "kb-queue",
+      "status": "RUNNING",
+      "startTime": "2026-11-16T06:30:00.000Z",
+      "historyLength": 16,
+      "memo": {
+        "owner": "kb-team"
+      },
+      "searchAttributes": {},
+      "input": {
+        "account": "amer"
+      },
+      "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/CrmSync-2026-11-16T06:30:00Z/8f3ed40f-8fde-41e1-a710-1d9cd1339fa5/history"
+    },
+    "history": {
+      "truncated": false,
+      "events": [
+        {
+          "eventId": 1,
+          "eventTime": "2026-11-16T06:30:00.000Z",
+          "eventType": "WorkflowExecutionStarted",
+          "attributes": {
+            "workflowType": {
+              "name": "CrmSync"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "account": "amer"
+              }
+            ],
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 2,
+          "eventTime": "2026-11-16T06:30:01.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 3,
+          "eventTime": "2026-11-16T06:30:02.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 4,
+          "eventTime": "2026-11-16T06:30:03.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "startedEventId": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 5,
+          "eventTime": "2026-11-16T06:30:04.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "activityId": "5",
+            "activityType": {
+              "name": "pullCrm"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "pullCrm",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 6,
+          "eventTime": "2026-11-16T06:30:05.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 7,
+          "eventTime": "2026-11-16T06:32:05.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "startedEventId": 6,
+            "result": [
+              {
+                "stage": "pullCrm",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 120,
+                "tail": "1407 contacts"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 8,
+          "eventTime": "2026-11-16T06:32:06.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 9,
+          "eventTime": "2026-11-16T06:32:07.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 10,
+          "eventTime": "2026-11-16T06:32:08.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "startedEventId": 9,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 11,
+          "eventTime": "2026-11-16T06:32:09.000Z",
+          "eventType": "WorkflowExecutionSignaled",
+          "attributes": {
+            "signalName": "approve-push",
+            "input": [
+              {
+                "approvedBy": "kb-ops"
+              }
+            ],
+            "identity": "kb-ops-cli"
+          }
+        },
+        {
+          "eventId": 12,
+          "eventTime": "2026-11-16T06:32:10.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 13,
+          "eventTime": "2026-11-16T06:32:11.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 12,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 14,
+          "eventTime": "2026-11-16T06:32:12.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 12,
+            "startedEventId": 13,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 15,
+          "eventTime": "2026-11-16T06:32:13.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 14,
+            "activityId": "15",
+            "activityType": {
+              "name": "pushCrm"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "pushCrm",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 16,
+          "eventTime": "2026-11-16T06:32:14.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 15,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        }
+      ]
+    }
+  },
+  "3e3de1da-88af-482c-a3f6-108d8f1a5210": {
+    "detail": {
+      "namespace": "kb",
+      "workflowId": "EvidenceExtract-2026-11-10T01:00:00Z",
+      "runId": "3e3de1da-88af-482c-a3f6-108d8f1a5210",
+      "workflowType": "EvidenceExtract",
+      "taskQueue": "kb-queue",
+      "status": "COMPLETED",
+      "startTime": "2026-11-10T01:00:00.000Z",
+      "closeTime": "2026-11-10T01:13:55.000Z",
+      "durationSeconds": 835,
+      "scheduledBy": "wiki-evidence-weekly",
+      "historyLength": 19,
+      "memo": {
+        "owner": "kb-team"
+      },
+      "searchAttributes": {
+        "TemporalScheduledById": "wiki-evidence-weekly"
+      },
+      "input": {
+        "space": "WIKI"
+      },
+      "result": {
+        "claims": 640
+      },
+      "uiUrl": "https://temporal.example.com/namespaces/kb/workflows/EvidenceExtract-2026-11-10T01:00:00Z/3e3de1da-88af-482c-a3f6-108d8f1a5210/history"
+    },
+    "history": {
+      "truncated": false,
+      "events": [
+        {
+          "eventId": 1,
+          "eventTime": "2026-11-10T01:00:00.000Z",
+          "eventType": "WorkflowExecutionStarted",
+          "attributes": {
+            "workflowType": {
+              "name": "EvidenceExtract"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "space": "WIKI"
+              }
+            ],
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 2,
+          "eventTime": "2026-11-10T01:00:01.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 3,
+          "eventTime": "2026-11-10T01:00:02.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 4,
+          "eventTime": "2026-11-10T01:00:03.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 2,
+            "startedEventId": 3,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 5,
+          "eventTime": "2026-11-10T01:00:04.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 4,
+            "activityId": "5",
+            "activityType": {
+              "name": "extractPages"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "extractPages",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 6,
+          "eventTime": "2026-11-10T01:00:05.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 7,
+          "eventTime": "2026-11-10T01:08:25.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 5,
+            "startedEventId": 6,
+            "result": [
+              {
+                "stage": "extractPages",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 500,
+                "tail": "640 claims"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 8,
+          "eventTime": "2026-11-10T01:08:26.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 9,
+          "eventTime": "2026-11-10T01:08:27.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 10,
+          "eventTime": "2026-11-10T01:08:28.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 8,
+            "startedEventId": 9,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 11,
+          "eventTime": "2026-11-10T01:08:29.000Z",
+          "eventType": "TimerStarted",
+          "attributes": {
+            "timerId": "cooldown",
+            "startToFireTimeout": "120s",
+            "workflowTaskCompletedEventId": 10
+          }
+        },
+        {
+          "eventId": 12,
+          "eventTime": "2026-11-10T01:10:29.000Z",
+          "eventType": "TimerFired",
+          "attributes": {
+            "timerId": "cooldown",
+            "startedEventId": 11
+          }
+        },
+        {
+          "eventId": 13,
+          "eventTime": "2026-11-10T01:10:30.000Z",
+          "eventType": "WorkflowTaskScheduled",
+          "attributes": {
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "attempt": 1
+          }
+        },
+        {
+          "eventId": 14,
+          "eventTime": "2026-11-10T01:10:31.000Z",
+          "eventType": "WorkflowTaskStarted",
+          "attributes": {
+            "scheduledEventId": 13,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 15,
+          "eventTime": "2026-11-10T01:10:32.000Z",
+          "eventType": "WorkflowTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 13,
+            "startedEventId": 14,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 16,
+          "eventTime": "2026-11-10T01:10:33.000Z",
+          "eventType": "ActivityTaskScheduled",
+          "attributes": {
+            "workflowTaskCompletedEventId": 15,
+            "activityId": "16",
+            "activityType": {
+              "name": "indexEvidence"
+            },
+            "taskQueue": {
+              "name": "kb-queue"
+            },
+            "input": [
+              {
+                "stage": "indexEvidence",
+                "project": "KB"
+              }
+            ],
+            "scheduleToCloseTimeout": "3600s",
+            "startToCloseTimeout": "600s",
+            "retryPolicy": {
+              "initialInterval": "5s",
+              "backoffCoefficient": 2,
+              "maximumInterval": "120s",
+              "maximumAttempts": 5
+            }
+          }
+        },
+        {
+          "eventId": 17,
+          "eventTime": "2026-11-10T01:10:34.000Z",
+          "eventType": "ActivityTaskStarted",
+          "attributes": {
+            "scheduledEventId": 16,
+            "attempt": 1,
+            "identity": "kb-worker-7f9c"
+          }
+        },
+        {
+          "eventId": 18,
+          "eventTime": "2026-11-10T01:13:54.000Z",
+          "eventType": "ActivityTaskCompleted",
+          "attributes": {
+            "scheduledEventId": 16,
+            "startedEventId": 17,
+            "result": [
+              {
+                "stage": "indexEvidence",
+                "status": "ok",
+                "exit": 0,
+                "seconds": 200,
+                "tail": "indexed 640 claims"
+              }
+            ]
+          }
+        },
+        {
+          "eventId": 19,
+          "eventTime": "2026-11-10T01:13:55.000Z",
+          "eventType": "WorkflowExecutionCompleted",
+          "attributes": {
+            "workflowTaskCompletedEventId": 15,
+            "result": [
+              {
+                "claims": 640
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

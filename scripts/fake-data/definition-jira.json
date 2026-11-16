@@ -1,0 +1,133 @@
+{
+  "id": "jira-kb",
+  "name": "jira-kb",
+  "nodes": [
+    {
+      "id": "clone-kb",
+      "label": "clone-kb",
+      "kind": "git",
+      "detail": "clone develop",
+      "params": {
+        "op": "clone",
+        "repo": "https://git.example.com/docs/jira-kb.git",
+        "branch": "develop",
+        "dest": "{workdir}/kb"
+      },
+      "gate": false,
+      "optional": false
+    },
+    {
+      "id": "preflight",
+      "label": "preflight",
+      "kind": "cli",
+      "detail": "jira-kb preflight --config config/pilot.yaml",
+      "params": {},
+      "gate": false,
+      "optional": false
+    },
+    {
+      "id": "capture",
+      "label": "capture",
+      "kind": "cli",
+      "detail": "jira-kb capture --config config/pilot.yaml --output {workdir}/snapshot",
+      "params": {},
+      "gate": false,
+      "optional": false
+    },
+    {
+      "id": "render",
+      "label": "render",
+      "kind": "cli",
+      "detail": "jira-kb render --snapshot {workdir}/snapshot --output {workdir}/rendered",
+      "params": {},
+      "gate": false,
+      "optional": false
+    },
+    {
+      "id": "validate",
+      "label": "validate",
+      "kind": "cli",
+      "detail": "jira-kb validate --input {workdir}/rendered",
+      "params": {},
+      "gate": false,
+      "optional": false
+    },
+    {
+      "id": "export",
+      "label": "export",
+      "kind": "cli",
+      "detail": "jira-kb export --input {workdir}/rendered --repo {workdir}/kb",
+      "params": {},
+      "gate": false,
+      "optional": false
+    },
+    {
+      "id": "push-kb",
+      "label": "push-kb",
+      "kind": "git",
+      "detail": "push develop",
+      "params": {
+        "op": "push",
+        "dest": "{workdir}/kb",
+        "branch": "develop",
+        "paths": [
+          "wiki"
+        ],
+        "message": "chore(kb): refresh"
+      },
+      "gate": false,
+      "optional": false
+    },
+    {
+      "id": "publish-kb",
+      "label": "publish-kb",
+      "kind": "kb_sync",
+      "detail": "example-jira-kb",
+      "params": {
+        "source_dir": "{workdir}/kb/wiki",
+        "prefix": "example-jira-kb",
+        "kb_id": "KBEXAMPLE01",
+        "ds_id": "DSEXAMPLE01",
+        "delete_removed": true
+      },
+      "gate": false,
+      "optional": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "clone-kb",
+      "to": "preflight"
+    },
+    {
+      "from": "preflight",
+      "to": "capture"
+    },
+    {
+      "from": "capture",
+      "to": "render"
+    },
+    {
+      "from": "render",
+      "to": "validate"
+    },
+    {
+      "from": "validate",
+      "to": "export"
+    },
+    {
+      "from": "export",
+      "to": "push-kb"
+    },
+    {
+      "from": "push-kb",
+      "to": "publish-kb"
+    }
+  ],
+  "meta": {
+    "source": "kbflow",
+    "queues": [
+      "kb-KBEXAMPLE01"
+    ]
+  }
+}

@@ -1,0 +1,142 @@
+[
+  {
+    "name": "crm-jira",
+    "schedule": {
+      "cron": "0 3 * * *",
+      "paused": false,
+      "nextRunTime": "2026-11-16T22:00:00.000Z"
+    },
+    "lastRun": {
+      "workflowId": "stream/crm-jira/20261114T030000",
+      "status": "COMPLETED",
+      "startTime": "2026-11-14T03:00:00Z",
+      "closeTime": "2026-11-14T03:12:45Z",
+      "durationSeconds": 765
+    },
+    "lastSuccess": {
+      "workflowId": "stream/crm-jira/20261114T030000",
+      "status": "COMPLETED",
+      "startTime": "2026-11-14T03:00:00Z",
+      "closeTime": "2026-11-14T03:12:45Z",
+      "durationSeconds": 765
+    },
+    "recentStatuses": [
+      "COMPLETED",
+      "COMPLETED",
+      "COMPLETED",
+      "COMPLETED",
+      "COMPLETED"
+    ]
+  },
+  {
+    "name": "wiki-kb",
+    "schedule": {
+      "cron": "0 4 * * *",
+      "paused": false,
+      "nextRunTime": "2026-11-17T01:00:00.000Z"
+    },
+    "lastRun": {
+      "workflowId": "stream/wiki-kb/20261114T040000",
+      "status": "COMPLETED",
+      "startTime": "2026-11-14T04:00:00Z",
+      "closeTime": "2026-11-14T04:08:12Z",
+      "durationSeconds": 492
+    },
+    "lastSuccess": {
+      "workflowId": "stream/wiki-kb/20261114T040000",
+      "status": "COMPLETED",
+      "startTime": "2026-11-14T04:00:00Z",
+      "closeTime": "2026-11-14T04:08:12Z",
+      "durationSeconds": 492
+    },
+    "recentStatuses": [
+      "COMPLETED",
+      "COMPLETED",
+      "FAILED",
+      "COMPLETED",
+      "COMPLETED"
+    ]
+  },
+  {
+    "name": "ces-ai-kb",
+    "schedule": {
+      "cron": "0 */6 * * *",
+      "paused": false,
+      "nextRunTime": "2026-11-16T07:30:00.000Z"
+    },
+    "lastRun": {
+      "workflowId": "stream/ces-ai-kb/20261114T120000",
+      "status": "RUNNING",
+      "startTime": "2026-11-14T12:00:00Z",
+      "durationSeconds": 1842
+    },
+    "lastSuccess": {
+      "workflowId": "stream/ces-ai-kb/20261113T180000",
+      "status": "COMPLETED",
+      "startTime": "2026-11-13T18:00:00Z",
+      "closeTime": "2026-11-13T18:22:10Z",
+      "durationSeconds": 1330
+    },
+    "recentStatuses": [
+      "RUNNING",
+      "COMPLETED",
+      "COMPLETED",
+      "COMPLETED",
+      "FAILED"
+    ]
+  },
+  {
+    "name": "wiki-evidence",
+    "schedule": {
+      "paused": true
+    },
+    "lastRun": {
+      "workflowId": "stream/wiki-evidence/20261110T030000",
+      "status": "COMPLETED",
+      "startTime": "2026-11-10T03:00:00Z",
+      "closeTime": "2026-11-10T03:04:18Z",
+      "durationSeconds": 258
+    },
+    "lastSuccess": {
+      "workflowId": "stream/wiki-evidence/20261110T030000",
+      "status": "COMPLETED",
+      "startTime": "2026-11-10T03:00:00Z",
+      "closeTime": "2026-11-10T03:04:18Z",
+      "durationSeconds": 258
+    },
+    "recentStatuses": [
+      "COMPLETED",
+      "COMPLETED",
+      "COMPLETED"
+    ]
+  },
+  {
+    "name": "product-kb",
+    "schedule": {
+      "cron": "30 2 * * *",
+      "paused": false,
+      "nextRunTime": "2026-11-16T22:00:00.000Z"
+    },
+    "lastRun": {
+      "workflowId": "stream/product-kb/20261113T023000",
+      "status": "FAILED",
+      "startTime": "2026-11-13T02:30:00Z",
+      "closeTime": "2026-11-13T02:31:02Z",
+      "durationSeconds": 62
+    },
+    "lastSuccess": {
+      "workflowId": "stream/product-kb/20261112T023000",
+      "status": "COMPLETED",
+      "startTime": "2026-11-12T02:30:00Z",
+      "closeTime": "2026-11-12T02:41:00Z",
+      "durationSeconds": 660
+    },
+    "recentStatuses": [
+      "FAILED",
+      "COMPLETED",
+      "COMPLETED",
+      "COMPLETED",
+      "COMPLETED"
+    ]
+  }
+]

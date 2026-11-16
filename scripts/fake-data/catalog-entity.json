@@ -1,0 +1,24 @@
+{
+  "apiVersion": "backstage.io/v1alpha1",
+  "kind": "Component",
+  "metadata": {
+    "name": "demo-stream",
+    "namespace": "default",
+    "uid": "bc19aebf-4b40-40d4-aac7-3f4e7bba810a",
+    "etag": "58c0850a-f868-4e26-a6a3-8b33aec5a3af",
+    "title": "Demo stream",
+    "description": "Knowledge-base ingest stream for the Temporal plugin screenshots",
+    "annotations": {
+      "temporal.io/cluster": "staging",
+      "temporal.io/namespace": "kb",
+      "temporal.io/stream": "ces-ai-kb",
+      "temporal.io/definition-location": "http://example.com/jira-kb.yaml"
+    }
+  },
+  "spec": {
+    "type": "service",
+    "lifecycle": "production",
+    "owner": "team-a"
+  },
+  "relations": []
+}
