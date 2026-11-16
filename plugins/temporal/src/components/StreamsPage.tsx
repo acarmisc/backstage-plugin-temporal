@@ -8,6 +8,7 @@ import type { ClusterSummary, StreamSummary } from '@acarmisc/backstage-plugin-t
 import { useTemporalApi } from '../api';
 import { useLoad } from '../hooks';
 import { FreshnessBadge, RunStatusBadge } from './StatusBadge';
+import { OwnerText, useStreamOwners } from './owners';
 import { streamLink, useUrlParams, workflowsLink } from './links';
 
 function statusDot(status: string): string {
@@ -29,6 +30,7 @@ const cell = { padding: '6px 10px', borderBottom: '1px solid rgba(128,128,128,0.
 export function StreamsPage() {
   const api = useTemporalApi();
   const params = useUrlParams();
+  const owners = useStreamOwners();
   const clusters = useLoad(() => api.get<ClusterSummary[]>('/clusters'), [api]);
 
   const cluster = params.get('cluster') ?? clusters.data?.[0]?.name;
@@ -59,6 +61,7 @@ export function StreamsPage() {
             <thead>
               <tr>
                 <th style={cell}>Stream</th>
+                <th style={cell}>Owner</th>
                 <th style={cell}>Schedule</th>
                 <th style={cell}>Last run</th>
                 <th style={cell}>Last success</th>
@@ -73,6 +76,7 @@ export function StreamsPage() {
                       {stream.name}
                     </a>
                   </td>
+                  <td style={cell}><OwnerText owner={owners.get(stream.name)} /></td>
                   <td style={cell}>{scheduleText(stream)}</td>
                   <td style={cell}>{stream.lastRun ? <RunStatusBadge status={stream.lastRun.status} /> : '—'}</td>
                   <td style={cell}>

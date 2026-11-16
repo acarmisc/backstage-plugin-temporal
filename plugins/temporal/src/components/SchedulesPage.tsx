@@ -4,11 +4,13 @@
  */
 
 import { useEffect, useState, type ReactNode } from 'react';
-import { Content, Header, Page } from '@backstage/core-components';
+import { Content, Header, Link, Page, Select } from '@backstage/core-components';
+import { Grid } from '@material-ui/core';
 import type { ClusterSummary, ScheduleListItem, ScheduleListResponse } from '@acarmisc/backstage-plugin-temporal-common';
 import { useTemporalApi } from '../api';
 import { useLoad } from '../hooks';
 import { cadenceText, relativeTime } from './format';
+import { OwnerText, useStreamOwners, type StreamOwner } from './owners';
 import { RunStatusBadge } from './StatusBadge';
 import { scheduleLink, useUrlParams, withQuery, workflowsLink } from './links';
 
@@ -61,7 +63,7 @@ export function Timeline({ times }: { times: string[] }) {
   );
 }
 
-function ScheduleCard({ item, cluster, namespace }: { item: ScheduleListItem; cluster: string; namespace: string }) {
+function ScheduleCard({ item, cluster, namespace, owner }: { item: ScheduleListItem; cluster: string; namespace: string; owner?: StreamOwner }) {
   const next = item.nextActionTimes[0];
   let nextRun: ReactNode = 'Next run: none';
   if (item.paused) nextRun = 'Next run: paused';
@@ -91,6 +93,9 @@ function ScheduleCard({ item, cluster, namespace }: { item: ScheduleListItem; cl
       </div>
       <div style={{ fontSize: 18, margin: '8px 0 2px' }}>{cadenceText(item.spec)}</div>
       <div style={{ fontSize: 13, opacity: 0.75 }}>{item.workflowType ?? '—'}</div>
+      <div style={{ fontSize: 13, opacity: 0.75 }}>
+        Owner: <OwnerText owner={owner} />
+      </div>
       <div style={{ marginTop: 10, fontSize: 14 }}>
         {nextRun}
       </div>
@@ -109,6 +114,7 @@ export function SchedulesPage() {
   const params = useUrlParams();
   const [filter, setFilter] = useState<Filter>(() => FILTERS.find(f => f === params.get('state')) ?? 'all');
   const [chosen, setChosen] = useState({ cluster: params.get('cluster') ?? undefined, namespace: params.get('namespace') ?? undefined });
+  const owners = useStreamOwners();
   const clusters = useLoad(() => api.get<ClusterSummary[]>('/clusters'), [api]);
 
   const cluster = chosen.cluster ?? clusters.data?.[0]?.name;
@@ -131,55 +137,45 @@ export function SchedulesPage() {
     <Page themeId="tool">
       <Header title="Temporal schedules" subtitle={cluster && namespace ? `${cluster} / ${namespace}` : ''} />
       <Content>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'end', marginBottom: 16 }}>
+        <Grid container spacing={2} alignItems="flex-end" style={{ marginBottom: 16 }}>
           {clusters.data && clusters.data.length > 1 && (
-            <label>
-              Cluster
-              <select
-                value={cluster ?? ''}
-                onChange={e => setChosen({ cluster: e.target.value, namespace: undefined })}
-                style={{ display: 'block' }}
-              >
-                {clusters.data.map(c => (
-                  <option key={c.name}>{c.name}</option>
-                ))}
-              </select>
-            </label>
+            <Grid item xs={12} sm={4} md={2}>
+              <Select
+                label="Cluster"
+                items={clusters.data.map(c => ({ label: c.name, value: c.name }))}
+                selected={cluster ?? ''}
+                onChange={v => setChosen({ cluster: String(v), namespace: undefined })}
+              />
+            </Grid>
           )}
-          <label>
-            Namespace
-            <select
-              value={namespace ?? ''}
+          <Grid item xs={12} sm={4} md={2}>
+            <Select
+              label="Namespace"
               disabled={!clusterInfo}
-              onChange={e => setChosen({ cluster, namespace: e.target.value })}
-              style={{ display: 'block' }}
-            >
-              {clusterInfo?.namespaces.map(ns => (
-                <option key={ns}>{ns}</option>
-              ))}
-            </select>
-          </label>
-          <label>
-            State
-            <select value={filter} onChange={e => setFilter(e.target.value as Filter)} style={{ display: 'block' }}>
-              {FILTERS.map(f => (
-                <option key={f} value={f}>
-                  {f[0].toUpperCase() + f.slice(1)}
-                </option>
-              ))}
-            </select>
-          </label>
-          <a href={workflowsLink({ cluster, namespace })} style={{ marginLeft: 'auto' }}>
-            Workflows
-          </a>
-        </div>
+              items={(clusterInfo?.namespaces ?? []).map(ns => ({ label: ns, value: ns }))}
+              selected={namespace ?? ''}
+              onChange={v => setChosen({ cluster, namespace: String(v) })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4} md={2}>
+            <Select
+              label="State"
+              items={FILTERS.map(f => ({ label: f[0].toUpperCase() + f.slice(1), value: f }))}
+              selected={filter}
+              onChange={v => setFilter(v as Filter)}
+            />
+          </Grid>
+          <Grid item style={{ marginLeft: 'auto' }}>
+            <Link to={workflowsLink({ cluster, namespace })}>Workflows</Link>
+          </Grid>
+        </Grid>
         {clusters.error && <p role="alert">{clusters.error}</p>}
         {list.error && <p role="alert">Could not load schedules: {list.error}</p>}
         {list.loading && !list.data && <p>Loading schedules…</p>}
         {list.data && shown.length === 0 && <p>No schedules match these filters.</p>}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
           {shown.map(s => (
-            <ScheduleCard key={s.scheduleId} item={s} cluster={cluster!} namespace={namespace!} />
+            <ScheduleCard key={s.scheduleId} item={s} cluster={cluster!} namespace={namespace!} owner={owners.get(s.scheduleId)} />
           ))}
         </div>
       </Content>

@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { renderInTestApp } from '@backstage/test-utils';
 import type { ClusterSummary, WorkflowListResponse } from '@acarmisc/backstage-plugin-temporal-common';
 
 const get = jest.fn();
+const mockOwners = new Map<string, { ownerRef: string; entityRef: string }>();
 // Stable identity: the real `useTemporalApi` is memoized, a fresh object per
 // render would retrigger every `useLoad` forever.
 const api = { get };
-jest.mock('../api', () => ({ useTemporalApi: () => api }));
-// The real Page/Header need a MUI theme; this test only cares about the requests.
-jest.mock('@backstage/core-components', () => ({
-  Page: ({ children }: { children?: unknown }) => <div>{children as never}</div>,
-  Header: ({ title }: { title?: string }) => <h1>{title}</h1>,
-  Content: ({ children }: { children?: unknown }) => <div>{children as never}</div>,
+jest.mock('./owners', () => ({
+  ...jest.requireActual('./owners'),
+  useStreamOwners: () => mockOwners,
 }));
+jest.mock('../api', () => ({ useTemporalApi: () => api }));
 
 import { formatDuration } from './format';
 import { WorkflowsPage } from './WorkflowsPage';
@@ -49,7 +49,7 @@ describe('WorkflowsPage', () => {
   });
 
   it('renders a row linking to the workflow detail', async () => {
-    render(<WorkflowsPage />);
+    await renderInTestApp(<WorkflowsPage />);
 
     const link = await screen.findByRole('link', { name: 'order-42' });
     expect(link).toHaveAttribute(
@@ -61,11 +61,24 @@ describe('WorkflowsPage', () => {
     expect(within(table).getByText('3m 4s')).toBeInTheDocument();
   });
 
+  it('shows the catalog owner of the stream, and a dash when unowned', async () => {
+    mockOwners.set('order-42', { ownerRef: 'group:default/team-a', entityRef: 'component:default/orders' });
+    await renderInTestApp(<WorkflowsPage />);
+    const row = (await screen.findByRole('link', { name: 'order-42' })).closest('tr')!;
+    expect(row).toHaveTextContent('team-a');
+
+    mockOwners.clear();
+    cleanup();
+    await renderInTestApp(<WorkflowsPage />);
+    expect((await screen.findByRole('link', { name: 'order-42' })).closest('tr')).toHaveTextContent('—');
+  });
+
   it('filters by status and keeps the filter in the URL', async () => {
-    render(<WorkflowsPage />);
+    await renderInTestApp(<WorkflowsPage />);
     await screen.findByRole('link', { name: 'order-42' });
 
-    fireEvent.click(screen.getByRole('checkbox', { name: /FAILED/ }));
+    fireEvent.mouseDown(screen.getAllByRole('button', { name: /All/ })[0]);
+    fireEvent.click(await screen.findByRole('option', { name: /FAILED/ }));
 
     await waitFor(() =>
       expect(get).toHaveBeenLastCalledWith(

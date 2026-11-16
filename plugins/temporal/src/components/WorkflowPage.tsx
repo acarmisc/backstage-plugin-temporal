@@ -19,6 +19,7 @@ import { buildHistoryGraph } from './historyGraph';
 import { formatDuration } from './format';
 import { JsonViewer } from './JsonViewer';
 import { RunStatusBadge } from './StatusBadge';
+import { OwnerText, ownerOf, useStreamOwners } from './owners';
 import { useIsDark } from './useIsDark';
 import { scheduleLink, useUrlParams, workflowLink, workflowsLink } from './links';
 import { WorkflowDiagram } from './WorkflowDiagram';
@@ -133,6 +134,7 @@ function ScheduleCards({ schedule, cluster, namespace }: { schedule: ScheduleDet
 export function WorkflowPage() {
   const api = useTemporalApi();
   const dark = useIsDark();
+  const owners = useStreamOwners();
   const params = useUrlParams();
   const cluster = params.get('cluster') ?? '';
   const namespace = params.get('namespace') ?? '';
@@ -244,6 +246,7 @@ export function WorkflowPage() {
                   ['Run ID', d.runId],
                   ['Task Queue', d.taskQueue],
                   ['Workflow Type', d.workflowType],
+                  ['Owner', <OwnerText owner={ownerOf(owners, workflowId)} />],
                   ['Scheduled By', d.scheduledBy ? <a href="#schedule">{d.scheduledBy}</a> : '—'],
                   ['History events', String(d.historyLength ?? (history.data ? events.length : '—'))],
                 ]}

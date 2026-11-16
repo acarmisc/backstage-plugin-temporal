@@ -7,7 +7,12 @@ import { render, screen } from '@testing-library/react';
 import type { ScheduleDetail } from '@acarmisc/backstage-plugin-temporal-common';
 
 const get = jest.fn();
+const mockOwners = new Map<string, { ownerRef: string; entityRef: string }>();
 const api = { get };
+jest.mock('./owners', () => ({
+  ...jest.requireActual('./owners'),
+  useStreamOwners: () => mockOwners,
+}));
 jest.mock('../api', () => ({ useTemporalApi: () => api }));
 jest.mock('@backstage/core-components', () => ({
   Page: ({ children }: { children?: unknown }) => <div>{children as never}</div>,

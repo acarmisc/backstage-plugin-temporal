@@ -9,6 +9,7 @@ import { useTemporalApi } from '../api';
 import { useLoad } from '../hooks';
 import { cadenceText, relativeTime } from './format';
 import { JsonViewer } from './JsonViewer';
+import { OwnerText, useStreamOwners } from './owners';
 import { card, StateBadge, Timeline } from './SchedulesPage';
 import { schedulesLink, useUrlParams, workflowLink } from './links';
 
@@ -19,6 +20,7 @@ const when = (iso: string) => `${new Date(iso).toLocaleString()} (${relativeTime
 export function SchedulePage() {
   const api = useTemporalApi();
   const params = useUrlParams();
+  const owners = useStreamOwners();
   const cluster = params.get('cluster') ?? '';
   const namespace = params.get('namespace') ?? '';
   const scheduleId = params.get('scheduleId') ?? '';
@@ -50,6 +52,10 @@ export function SchedulePage() {
               </div>
               {s.note && <p>{s.note}</p>}
               <dl style={{ display: 'grid', gridTemplateColumns: 'max-content 1fr', gap: '4px 16px' }}>
+                <dt>Owner</dt>
+                <dd>
+                  <OwnerText owner={owners.get(scheduleId)} />
+                </dd>
                 <dt>Workflow type</dt>
                 <dd>{s.workflowType ?? '—'}</dd>
                 <dt>Overlap policy</dt>

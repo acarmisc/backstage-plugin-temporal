@@ -3,17 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
+import { renderInTestApp } from '@backstage/test-utils';
 import type { ClusterSummary, ScheduleListResponse } from '@acarmisc/backstage-plugin-temporal-common';
 
 const get = jest.fn();
+const mockOwners = new Map<string, { ownerRef: string; entityRef: string }>();
 const api = { get };
-jest.mock('../api', () => ({ useTemporalApi: () => api }));
-jest.mock('@backstage/core-components', () => ({
-  Page: ({ children }: { children?: unknown }) => <div>{children as never}</div>,
-  Header: ({ title }: { title?: string }) => <h1>{title}</h1>,
-  Content: ({ children }: { children?: unknown }) => <div>{children as never}</div>,
+jest.mock('./owners', () => ({
+  ...jest.requireActual('./owners'),
+  useStreamOwners: () => mockOwners,
 }));
+jest.mock('../api', () => ({ useTemporalApi: () => api }));
 
 import { cadenceText, relativeTime } from './format';
 import { SchedulesPage } from './SchedulesPage';
@@ -42,7 +43,7 @@ describe('SchedulesPage', () => {
   });
 
   it('renders a card per schedule linking to its detail', async () => {
-    render(<SchedulesPage />);
+    await renderInTestApp(<SchedulesPage />);
 
     const card = (await screen.findByText('nightly-sync')).closest('a')!;
     expect(card).toHaveAttribute('href', '/temporal/schedule?cluster=temporal&namespace=default&scheduleId=nightly-sync');
@@ -52,11 +53,21 @@ describe('SchedulesPage', () => {
     expect(screen.getByText('old-report')).toBeInTheDocument();
   });
 
+  it('shows the owner on matching schedules only', async () => {
+    mockOwners.set('nightly-sync', { ownerRef: 'group:default/team-a', entityRef: 'component:default/sync' });
+    await renderInTestApp(<SchedulesPage />);
+    const card = (await screen.findByText('nightly-sync')).closest('a')!;
+    expect(card).toHaveTextContent('Owner: team-a');
+    expect(screen.getByText('old-report').closest('a')).toHaveTextContent('Owner: —');
+    mockOwners.clear();
+  });
+
   it('filters paused schedules and keeps the filter in the URL', async () => {
-    render(<SchedulesPage />);
+    await renderInTestApp(<SchedulesPage />);
     await screen.findByText('nightly-sync');
 
-    fireEvent.change(screen.getByLabelText('State'), { target: { value: 'paused' } });
+    fireEvent.mouseDown(screen.getByRole('button', { name: /All/ }));
+    fireEvent.click(await screen.findByRole('option', { name: 'Paused' }));
 
     expect(screen.queryByText('nightly-sync')).not.toBeInTheDocument();
     expect(screen.getByText('old-report')).toBeInTheDocument();

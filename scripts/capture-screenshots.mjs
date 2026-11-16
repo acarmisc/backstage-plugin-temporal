@@ -32,6 +32,7 @@ const runsCes = load('runs-ces-ai-kb.json');
 const runDetails = { running: load('run-detail.json'), completed: load('run-detail-completed.json') };
 const definitions = { jira: load('definition-jira.json'), multisource: load('definition-ms.json') };
 const catalogEntity = load('catalog-entity.json');
+const catalogEntities = load('catalog-entities.json');
 const workflows = load('workflows.json');
 const workflowDetails = load('workflow-details.json');
 const schedules = load('schedules.json');
@@ -81,6 +82,7 @@ await page.route('**/api/temporal/**', route => serveTemporal(route, new URL(rou
 // The entity behind the entity tab. The catalog has no demo-stream, so its lookup is mocked.
 await page.route('**/api/catalog/**', route => {
   const p = new URL(route.request().url()).pathname;
+  if (p.endsWith('/api/catalog/entities')) return json(route, catalogEntities);
   if (p.endsWith('/entities/by-name/component/default/demo-stream')) return json(route, catalogEntity);
   return notMocked(route);
 });

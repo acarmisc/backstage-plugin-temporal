@@ -1,0 +1,162 @@
+[
+  {
+    "apiVersion": "backstage.io/v1alpha1",
+    "kind": "Component",
+    "metadata": {
+      "name": "crm-jira",
+      "namespace": "default",
+      "annotations": {
+        "temporal.io/stream": "crm-jira"
+      }
+    },
+    "spec": {
+      "type": "service",
+      "lifecycle": "production",
+      "owner": "team-crm"
+    }
+  },
+  {
+    "apiVersion": "backstage.io/v1alpha1",
+    "kind": "Component",
+    "metadata": {
+      "name": "wiki-kb",
+      "namespace": "default",
+      "annotations": {
+        "temporal.io/stream": "wiki-kb"
+      }
+    },
+    "spec": {
+      "type": "service",
+      "lifecycle": "production",
+      "owner": "team-knowledge"
+    }
+  },
+  {
+    "apiVersion": "backstage.io/v1alpha1",
+    "kind": "Component",
+    "metadata": {
+      "name": "ces-ai-kb",
+      "namespace": "default",
+      "annotations": {
+        "temporal.io/stream": "ces-ai-kb"
+      }
+    },
+    "spec": {
+      "type": "service",
+      "lifecycle": "production",
+      "owner": "team-a"
+    }
+  },
+  {
+    "apiVersion": "backstage.io/v1alpha1",
+    "kind": "Component",
+    "metadata": {
+      "name": "wiki-evidence",
+      "namespace": "default",
+      "annotations": {
+        "temporal.io/stream": "wiki-evidence"
+      }
+    },
+    "spec": {
+      "type": "service",
+      "lifecycle": "production",
+      "owner": "team-knowledge"
+    }
+  },
+  {
+    "apiVersion": "backstage.io/v1alpha1",
+    "kind": "Component",
+    "metadata": {
+      "name": "ingestjira",
+      "namespace": "default",
+      "annotations": {
+        "temporal.io/stream": "IngestJira"
+      }
+    },
+    "spec": {
+      "type": "service",
+      "lifecycle": "production",
+      "owner": "team-a"
+    }
+  },
+  {
+    "apiVersion": "backstage.io/v1alpha1",
+    "kind": "Component",
+    "metadata": {
+      "name": "ingestconfluence",
+      "namespace": "default",
+      "annotations": {
+        "temporal.io/stream": "IngestConfluence"
+      }
+    },
+    "spec": {
+      "type": "service",
+      "lifecycle": "production",
+      "owner": "team-knowledge"
+    }
+  },
+  {
+    "apiVersion": "backstage.io/v1alpha1",
+    "kind": "Component",
+    "metadata": {
+      "name": "crmsync",
+      "namespace": "default",
+      "annotations": {
+        "temporal.io/stream": "CrmSync"
+      }
+    },
+    "spec": {
+      "type": "service",
+      "lifecycle": "production",
+      "owner": "team-crm"
+    }
+  },
+  {
+    "apiVersion": "backstage.io/v1alpha1",
+    "kind": "Component",
+    "metadata": {
+      "name": "jira-sync",
+      "namespace": "default",
+      "annotations": {
+        "temporal.io/stream": "jira-sync"
+      }
+    },
+    "spec": {
+      "type": "service",
+      "lifecycle": "production",
+      "owner": "team-a"
+    }
+  },
+  {
+    "apiVersion": "backstage.io/v1alpha1",
+    "kind": "Component",
+    "metadata": {
+      "name": "confluence-hourly",
+      "namespace": "default",
+      "annotations": {
+        "temporal.io/stream": "confluence-hourly"
+      }
+    },
+    "spec": {
+      "type": "service",
+      "lifecycle": "production",
+      "owner": "team-knowledge"
+    }
+  },
+  {
+    "apiVersion": "backstage.io/v1alpha1",
+    "kind": "Component",
+    "metadata": {
+      "name": "reindex-weekly",
+      "namespace": "default",
+      "annotations": {
+        "temporal.io/stream": "reindex-weekly"
+      }
+    },
+    "spec": {
+      "type": "service",
+      "lifecycle": "production",
+      "owner": "team-platform"
+    }
+  }
+]

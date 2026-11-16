@@ -153,6 +153,30 @@ write('catalog-entity.json', {
   relations: [],
 });
 
+// Components that own streams, schedules and the demo workflow ids (which lack the stream/ prefix),
+// served for the owner lookup (`GET /api/catalog/entities`). [stream annotation, owner]
+const owned = [
+  ['crm-jira', 'team-crm'],
+  ['wiki-kb', 'team-knowledge'],
+  ['ces-ai-kb', 'team-a'],
+  ['wiki-evidence', 'team-knowledge'],
+  ['IngestJira', 'team-a'],
+  ['IngestConfluence', 'team-knowledge'],
+  ['CrmSync', 'team-crm'],
+  ['jira-sync', 'team-a'],
+  ['confluence-hourly', 'team-knowledge'],
+  ['reindex-weekly', 'team-platform'],
+];
+write(
+  'catalog-entities.json',
+  owned.map(([stream, owner]) => ({
+    apiVersion: 'backstage.io/v1alpha1',
+    kind: 'Component',
+    metadata: { name: stream.toLowerCase(), namespace: 'default', annotations: { 'temporal.io/stream': stream } },
+    spec: { type: 'service', lifecycle: 'production', owner },
+  })),
+);
+
 // ---------------------------------------------------------------------------
 // Workflow browser: executions, their histories, and the schedules that start some of them.
 //

@@ -7,9 +7,14 @@ import { render, screen, waitFor } from '@testing-library/react';
 import type { ClusterSummary } from '@acarmisc/backstage-plugin-temporal-common';
 
 const get = jest.fn();
+const mockOwners = new Map<string, { ownerRef: string; entityRef: string }>();
 // Stable identity: the real `useTemporalApi` is memoized, a fresh object per
 // render would retrigger every `useLoad` forever.
 const api = { get };
+jest.mock('./owners', () => ({
+  ...jest.requireActual('./owners'),
+  useStreamOwners: () => mockOwners,
+}));
 jest.mock('../api', () => ({ useTemporalApi: () => api }));
 // The real Page/Header need a MUI theme; this test only cares about the requests.
 jest.mock('@backstage/core-components', () => ({

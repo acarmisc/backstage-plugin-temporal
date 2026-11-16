@@ -192,6 +192,22 @@ annotation; use the URL reader allow-list for the definition URL.
 Definitions from a repository are read through Backstage's `UrlReader`, so only
 hosts configured under `integrations` (or `backend.reading.allow`) can be read.
 
+### Ownership
+
+Streams, workflows and schedules show their Backstage owner, read from the catalog in
+the browser (no extra backend endpoint). A catalog `Component` with the
+`temporal.io/stream: <stream name>` annotation and a `spec.owner` makes that owner
+appear in the **Owner** column of the Streams and Workflows pages, on schedule cards,
+and in the workflow and schedule detail headers. Unowned items show `—`.
+
+- Workflows match by id: `stream/<name>`, `stream/<name>/<timestamp>` and
+  `stream/<name>-<timestamp>` all resolve to `<name>` (the longest matching stream name wins).
+- Schedules match when the schedule id equals the stream name (best effort).
+- `temporal.io/cluster` and `temporal.io/namespace` are not used for the lookup: if two
+  entities claim the same stream name, the last one returned wins.
+- The lookup fails soft: if the catalog call errors or is denied, nothing is shown and
+  there is no error banner. The user needs permission to read the Components.
+
 ### Data converters
 
 Stage states are matched to activities by the stage name in each activity's
